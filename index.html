@@ -78,11 +78,7 @@
 				
 					<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
 		        
-					<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
-		        
-					<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
-		        
-					<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+					<a class="mail" target="_blank" href="/598466208@qq.com" title="mail"><i class="icon-mail"></i></a>
 		        
 			</div>
 		</nav>
@@ -119,11 +115,7 @@
 					
 						<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
 			        
-						<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
-			        
-						<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
-			        
-						<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+						<a class="mail" target="_blank" href="/598466208@qq.com" title="mail"><i class="icon-mail"></i></a>
 			        
 				</div>
 			</nav>
@@ -150,6 +142,168 @@
           </div>
           <div id="js-content" class="content-ll">
             
+  
+    <article id="post-RNA_variant" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/19/RNA_variant/">Calling variants in RNAseq</a>
+    </h1>
+  
+
+        
+        <a href="/2017/12/19/RNA_variant/" class="archive-article-date">
+  	<time datetime="2017-12-19T13:34:29.733Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Calling-variants-in-RNAseq"><a href="#Calling-variants-in-RNAseq" class="headerlink" title="Calling variants in RNAseq"></a>Calling variants in RNAseq</h1><p>The whole practice is based on the workflow: <a href="https://software.broadinstitute.org/gatk/documentation/article.php?id=3891" target="_blank" rel="external">Calling variants in RNAseq</a></p>
+<p>Some steps perform using mutiple tools</p>
+<h2 id="The-workflow-for-calling-variants-from-RNA-seq"><a href="#The-workflow-for-calling-variants-from-RNA-seq" class="headerlink" title="The workflow for calling variants from RNA-seq"></a>The workflow for calling variants from RNA-seq</h2><ul>
+<li>Quality control for RNA sequence</li>
+<li>Build the index for reference genome</li>
+<li>Align sequence to reference genome</li>
+<li>Add or replace the group name for sample (especially for followed GATK)</li>
+<li>Mark duplicated sequences</li>
+<li>Make <code>.fai</code> and <code>.dict</code> file of reference (especially for followed GATK)</li>
+<li>Split ‘N’ or bad cigar for reads</li>
+<li>Realign the InDel region</li>
+<li>Call SNPs and InDels using GATK</li>
+<li>Filt SNPs and InDels </li>
+</ul>
+<h3 id="1-Quality-control-for-RNA-sequence"><a href="#1-Quality-control-for-RNA-sequence" class="headerlink" title="1. Quality control for RNA sequence"></a>1. Quality control for RNA sequence</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">java -jar Trimmomatic-0.36/trimmomatic-0.36.jar  PE -threads 20 -phred33  293TW1_control.R1.fq.gz 293TW1_control.R2.fq.gz 293TW1_control_clean.R1.fq.gz   293TW1_control_clean_unpaired.R1.fq.gz   293TW1_control_clean.R2.fq.gz  293TW1_control_clean_unpaired.R2.fq.gz ILLUMINACLIP:/home/Adapters/mRNA.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 HEADCROP:0 MINLEN:36</div></pre></td></tr></table></figure>
+<p><code>/home/Adapters/mRNA.fa</code> is the file containing the adapter information of the sequences</p>
+<h3 id="2-Build-the-index-for-reference-genome"><a href="#2-Build-the-index-for-reference-genome" class="headerlink" title="2. Build the index for reference genome"></a>2. Build the index for reference genome</h3><h4 id="2-1-Build-the-index-using-hisat2"><a href="#2-1-Build-the-index-using-hisat2" class="headerlink" title="2.1. Build the index using hisat2"></a>2.1. Build the index using <code>hisat2</code></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hisat2-build Fusarium_graminearum.RR1.fa Fusarium_graminearum.RR1</div></pre></td></tr></table></figure>
+<p>output files:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">Fusarium_graminearum.1.ht2</div><div class="line">Fusarium_graminearum.2.ht2</div><div class="line">Fusarium_graminearum.3.ht2</div><div class="line">Fusarium_graminearum.4.ht2</div><div class="line">Fusarium_graminearum.5.ht2</div><div class="line">Fusarium_graminearum.6.ht2</div><div class="line">Fusarium_graminearum.7.ht2</div><div class="line">Fusarium_graminearum.8.ht2</div></pre></td></tr></table></figure></p>
+<h4 id="2-2-Build-the-index-using-STAR"><a href="#2-2-Build-the-index-using-STAR" class="headerlink" title="2.2. Build the index using STAR"></a>2.2. Build the index using <code>STAR</code></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mkdir STAR_ref</div><div class="line">STAR --runMode genomeGenerate --runThreadN 10 --genomeFastaFiles Fusarium_graminearum.RR1.fa --genomeDir STAR_ref  --sjdbGTFfile Fusarium_graminearum.RR1.36.gtf  --sjdbOverhang 149</div></pre></td></tr></table></figure>
+<ul>
+<li>Firstly we should create the directory <code>STAR_ref</code> that need for the followed command</li>
+<li>It need the <code>.gtf</code> annotation file because the <code>STAR</code> need junction information of transcriptome  based on the feature <code>exon</code></li>
+<li>Parameter <code>sjdbOverhang</code> is the numeric of read length minus 1. If read length is 150 (each end of PE reads), it should be 149</li>
+</ul>
+<p>output files:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">STAR_ref/</div><div class="line">├── chrLength.txt</div><div class="line">├── chrNameLength.txt</div><div class="line">├── chrName.txt</div><div class="line">├── chrStart.txt</div><div class="line">├── exonGeTrInfo.tab</div><div class="line">├── exonInfo.tab</div><div class="line">├── geneInfo.tab</div><div class="line">├── Genome</div><div class="line">├── genomeParameters.txt</div><div class="line">├── SA</div><div class="line">├── SAindex</div><div class="line">├── sjdbInfo.txt</div><div class="line">├── sjdbList.fromGTF.out.tab</div><div class="line">├── sjdbList.out.tab</div><div class="line">└── transcriptInfo.tab</div></pre></td></tr></table></figure></p>
+<h3 id="3-Align-sequence-to-reference-genome"><a href="#3-Align-sequence-to-reference-genome" class="headerlink" title="3. Align sequence to reference genome"></a>3. Align sequence to reference genome</h3><h4 id="3-1-Align-reads-using-STAR"><a href="#3-1-Align-reads-using-STAR" class="headerlink" title="3.1. Align reads using STAR"></a>3.1. Align reads using <code>STAR</code></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">STAR --runThreadN 20 --genomeDir  STAR_ref --readFilesIn T01.R1.fq.gz T01.R1.fq.gz --readFilesCommand gunzip -c --outSAMtype BAM SortedByCoordinate --outFileNamePrefix T01/</div></pre></td></tr></table></figure>
+<ul>
+<li>For best the output prefix should ends with ‘/‘ when conducting mutiple samples, then it is the prefix of the directory</li>
+<li>Parameter <code>--readFilesCommand gunzip -c</code> is for the compressed <code>.gz</code> files</li>
+<li>The result just contain mapped reads, if you need extract unmapped reads you should add parameter <code>--outReadsUnmapped Fastx</code></li>
+</ul>
+<p>example of STAR alignment:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">STAR --genomeDir mouse84.STARIndex/ \</div><div class="line">--readFilesIn &lt;sample_id&gt;.fastq.gz \</div><div class="line">--outFileNamePrefix &lt;sample_id&gt;/osample_id&gt;.fastq.gz. \</div><div class="line">--runThreadN 8 \</div><div class="line">--limitBAMsortRAM 60000000000 \</div><div class="line">--outSAMattrRGline ID:osample_id&gt;.fastq.gz SM:osample_id&gt;.fastq.gz \</div><div class="line">--outBAMsortingThreadN 8 \</div><div class="line">--outSAMtype BAM SortedByCoordinate \</div><div class="line">--outSAMunmapped Within \</div><div class="line">--outSAMstrandField intronMotif \</div><div class="line">--readFilesCommand zcat \</div><div class="line">--chimSegmentMin 20 \</div><div class="line">--genomeLoad NoSharedMemory</div></pre></td></tr></table></figure></p>
+<h4 id="3-2-Align-reads-using-hisat2"><a href="#3-2-Align-reads-using-hisat2" class="headerlink" title="3.2. Align reads using hisat2"></a>3.2. Align reads using <code>hisat2</code></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hisat2 -x Fusarium_graminearum.RR1  -p 10 -1 T01.R1.fq.gz -2 T01.R1.fq.gz  -S T01.sam</div></pre></td></tr></table></figure>
+<ul>
+<li>Parameter <code>-p</code> is the number of threads used</li>
+<li>Parameter <code>-x</code> is the prefix of built index for hisat2</li>
+</ul>
+<h4 id="3-3-Convert-sam-to-bam-for-hisat2"><a href="#3-3-Convert-sam-to-bam-for-hisat2" class="headerlink" title="3.3. Convert .sam to .bam (for hisat2)"></a>3.3. Convert <code>.sam</code> to <code>.bam</code> (for hisat2)</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">samtools view -hbS T01.sam &gt; T01.bam</div></pre></td></tr></table></figure>
+<h3 id="4-Add-or-replace-the-group-name-for-sample-using-PICARD"><a href="#4-Add-or-replace-the-group-name-for-sample-using-PICARD" class="headerlink" title="4. Add or replace the group name for sample using PICARD"></a>4. Add or replace the group name for sample using <a href="https://broadinstitute.github.io/picard/command-line-overview.html" target="_blank" rel="external">PICARD</a></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">java -jar picard-2.8.2.jar AddOrReplaceReadGroups I=T01.bam O=T01.sorted.bam SORT_ORDER=coordinate  RGID=T01  RGLB=1  RGPL=illumina RGPU=1  RGSM=T01</div></pre></td></tr></table></figure>
+<ul>
+<li>RGID (String): Read Group ID Default value: 1. This option can be set to ‘null’ to clear the default value</li>
+<li>RGLB (String): Read Group library Required</li>
+<li>RGPL (String): Read Group platform (e.g. illumina, solid) Required</li>
+<li>RGSM (String): Read Group sample name Required</li>
+</ul>
+<p>example:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">java -jar picard.jar AddOrReplaceReadGroups \</div><div class="line">      I=input.bam \</div><div class="line">      O=output.bam \</div><div class="line">      RGID=4 \</div><div class="line">      RGLB=lib1 \</div><div class="line">      RGPL=illumina \</div><div class="line">      RGPU=unit1 \</div><div class="line">      RGSM=20</div></pre></td></tr></table></figure></p>
+<h3 id="5-Mark-duplicated-sequences"><a href="#5-Mark-duplicated-sequences" class="headerlink" title="5. Mark duplicated sequences"></a>5. Mark duplicated sequences</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">java -jar picard-2.8.2.jar MarkDuplicates I=T01.sorted.bam  O=T01.sorted_deduplicated.bam CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT M=duplicate_metrics.txt</div></pre></td></tr></table></figure>
+<ul>
+<li>Validation stringency for all SAM files read by this program. Setting stringency to SILENT can improve performance when processing a BAM file in which variable-length data (read, qualities, tags) do not otherwise need to be decoded. Default value: STRICT. This option can be set to ‘null’ to clear the default value. Possible values: {STRICT, LENIENT, SILENT}</li>
+<li>Whether to create a BAM index when writing a coordinate-sorted BAM file. Default value: false. This option can be set to ‘null’ to clear the default value. Possible values: {true, false}</li>
+</ul>
+<h3 id="6-Make-fai-and-dict-file-of-reference"><a href="#6-Make-fai-and-dict-file-of-reference" class="headerlink" title="6. Make .fai and .dict file of reference"></a>6. Make <code>.fai</code> and <code>.dict</code> file of reference</h3><h4 id="6-1-Build-fai-file-using-samtools"><a href="#6-1-Build-fai-file-using-samtools" class="headerlink" title="6.1. Build fai file using samtools"></a>6.1. Build <code>fai</code> file using <code>samtools</code></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ samtools faidx Fusarium_graminearum.RR1.fa</div></pre></td></tr></table></figure>
+<p>output file<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ head Fusarium_graminearum.RR1.fa.fai</div><div class="line">1   11760891    52  60  61</div><div class="line">2   8997558 11957009    60  61</div><div class="line">3   7792947 21104578    60  61</div><div class="line">4   9395062 29027459    60  61</div><div class="line">Mt  95638   38579157    60  61</div><div class="line">HG970330    5846    38676453    60  61</div></pre></td></tr></table></figure></p>
+<h4 id="6-2-Build-dict-file-using-PICARD"><a href="#6-2-Build-dict-file-using-PICARD" class="headerlink" title="6.2. Build dict file using PICARD"></a>6.2. Build <code>dict</code> file using <code>PICARD</code></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ java -jar picard-2.8.2.jar CreateSequenceDictionary REFERENCE=Fusarium_graminearum.RR1.fa OUTPUT=Fusarium_graminearum.RR1.dict</div></pre></td></tr></table></figure>
+<p>output:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">$ head Fusarium_graminearum.RR1.dict</div><div class="line">@HD VN:1.5</div><div class="line">@SQ SN:1    LN:11760891 M5:cc988f15b8c5ea82b1267cd4651ec8a4 UR:file:/home/wzk/database/GENOME/Fusarium_graminearum/Fusarium_graminearum.RR1.fa</div><div class="line">@SQ SN:2    LN:8997558  M5:12e5b95e24f75fe4dcf5de14fcad513a UR:file:/home/wzk/database/GENOME/Fusarium_graminearum/Fusarium_graminearum.RR1.fa</div><div class="line">@SQ SN:3    LN:7792947  M5:c7f2269dfd303d309beabb6b1cf6d7a7 UR:file:/home/wzk/database/GENOME/Fusarium_graminearum/Fusarium_graminearum.RR1.fa</div><div class="line">@SQ SN:4    LN:9395062  M5:12139fcd3f1d1b06e4aed20f090982db UR:file:/home/wzk/database/GENOME/Fusarium_graminearum/Fusarium_graminearum.RR1.fa</div><div class="line">@SQ SN:Mt   LN:95638    M5:c1f9428ce9004f4abab56c1752742085 UR:file:/home/wzk/database/GENOME/Fusarium_graminearum/Fusarium_graminearum.RR1.fa</div><div class="line">@SQ SN:HG970330 LN:5846 M5:4f0aeea0dd96a9f497c44c2e380e7bc9 UR:file:/home/wzk/database/GENOME/Fusarium_graminearum/Fusarium_graminearum.RR1.fa</div></pre></td></tr></table></figure></p>
+<ul>
+<li>Note: output should delete the suffix <code>.fa</code> for input, and then add the suffix <code>.dict</code></li>
+</ul>
+<h3 id="7-Split-‘N’-or-bad-cigar-for-reads"><a href="#7-Split-‘N’-or-bad-cigar-for-reads" class="headerlink" title="7. Split ‘N’ or bad cigar for reads"></a>7. Split ‘N’ or bad cigar for reads</h3><p>using GATK version 3.7<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">java -jar GenomeAnalysisTK.jar -T SplitNCigarReads -R Fusarium_graminearum.RR1.fa  -I T01.sorted_deduplicated.bam -o T01.sorted_deduplicated_split.bam -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 -U ALLOW_N_CIGAR_READS</div></pre></td></tr></table></figure></p>
+<h3 id="8-Realign-the-InDel-region"><a href="#8-Realign-the-InDel-region" class="headerlink" title="8. Realign the InDel region"></a>8. Realign the InDel region</h3><h4 id="8-1-Get-InDel-region-that-need-realignment"><a href="#8-1-Get-InDel-region-that-need-realignment" class="headerlink" title="8.1. Get InDel region that need realignment"></a>8.1. Get InDel region that need realignment</h4><p> The GATK people recommend a few quality control steps before you run the SNP calling. In particular, they recommend local re-alignment around indels, because reads whose ends map to the location of an indel can sometimes lead to false positive SNP calls. I’ll try to illustrate this with a simplified example. Suppose the reference sequence is GGGGTTTT and there’s an alternate allele with a 4-bp insertion of C’s: GGGGCCCCTTTT. Now if a read carries the entire insertion, the aligner can figure things out without a problem. However, if the end of the read overlaps the insertion, you could run into problems. For example:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Reference : GGGG----TTTT</div><div class="line">Read 1    :    GCCCCT</div><div class="line">Read 2    : GGGG----C</div></pre></td></tr></table></figure>
+<p>Read 1 looks fine, but read 2 is probably mis-aligned; rather than counting the C as an insertion, which is probably better, the aligner has placed it after the indel, making it look like there is a SNP there. In GATK we can account for this problem by doing local re-alignment around potential indel sites, in which we incorporate information about all the reads in that region simultaneously, rather than mapping each read individually. First, GATK needs to figure out which regions are in need of re-alignment:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ java -Xmx10g -jar GenomeAnalysisTK.jar -T RealignerTargetCreator -R  Fusarium_graminearum.RR1.fa -I Input.sorted_group_dup_splitN.bam -L 1:1-135835  -o  unified_1_135835.realign.intervals</div></pre></td></tr></table></figure>
+<p>output files<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">$ head  unified_1_135835.realign.intervals</div><div class="line">1:2518-2519</div><div class="line">1:8152</div><div class="line">1:9944</div><div class="line">1:16132-16134</div><div class="line">1:16853-16854</div><div class="line">1:26019-26020</div><div class="line">1:26762-26763</div><div class="line">1:28047</div><div class="line">1:31307-31310</div><div class="line">1:39354</div></pre></td></tr></table></figure></p>
+<h4 id="8-2-Realign-the-file-based-on-the-InDel-region"><a href="#8-2-Realign-the-file-based-on-the-InDel-region" class="headerlink" title="8.2. Realign the file based on the InDel region"></a>8.2. Realign the file based on the InDel region</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ java -Xmx10g -jar GenomeAnalysisTK.jar  -T HaplotypeCaller -R Fusarium_graminearum.RR1.fa  -nct 5 -I 1_135835.realigned.bam    --genotyping_mode DISCOVERY -L 1:1-135835  -o 1_135835_realign.vcf</div></pre></td></tr></table></figure>
+<h3 id="9-Call-SNPs-and-InDels-using-GATK"><a href="#9-Call-SNPs-and-InDels-using-GATK" class="headerlink" title="9. Call SNPs and InDels using GATK"></a>9. Call SNPs and InDels using GATK</h3><h4 id="9-1-Call-SNPs-using-GATK"><a href="#9-1-Call-SNPs-using-GATK" class="headerlink" title="9.1. Call SNPs using GATK"></a>9.1. Call SNPs using GATK</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">java -Xmx50g -jar GenomeAnalysisTK.jar -T HaplotypeCaller -R Fusarium_graminearum.RR1.fa -nct 20 -I T01.sorted_deduplicated_split.bam -dontUseSoftClippedBases  --genotyping_mode DISCOVERY   -stand_call_conf 20  -o T01.vcf</div></pre></td></tr></table></figure>
+<h5 id="Use-HaplotypeCaller"><a href="#Use-HaplotypeCaller" class="headerlink" title="Use HaplotypeCaller!"></a><a href="https://gatkforums.broadinstitute.org/gatk/discussion/3151/should-i-use-unifiedgenotyper-or-haplotypecaller-to-call-variants-on-my-data" target="_blank" rel="external">Use HaplotypeCaller!</a></h5><p>The HaplotypeCaller is a more recent and sophisticated tool than the UnifiedGenotyper. Its ability to call SNPs is equivalent to that of the UnifiedGenotyper, its ability to call indels is far superior, and it is now capable of calling non-diploid samples. It also comprises several unique functionalities such as the reference confidence model (which enables efficient and incremental variant discovery on ridiculously large cohorts) and special settings for RNAseq data.</p>
+<p><strong>As of GATK version 3.3, we recommend using HaplotypeCaller in all cases, with no exceptions.</strong></p>
+<p>If you are limited to older versions for project continuity, you may opt to use UnifiedGenotyper in the following cases:</p>
+<ul>
+<li>If you are working with non-diploid organisms (UG can handle different levels of ploidy while older versions of HC cannot)</li>
+<li>If you are working with pooled samples (also due to the HC’s limitation regarding ploidy)</li>
+<li>If you want to analyze more than 100 samples at a time (for performance reasons) (versions 2.x)</li>
+</ul>
+<h5 id="Call-SNP-for-the-given-region"><a href="#Call-SNP-for-the-given-region" class="headerlink" title="Call SNP for the given region"></a>Call SNP for the given region</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">java -Xmx20g -jar GenomeAnalysisTK.jar  -T HaplotypeCaller -R Triticum_aestivum.TGACv1.dna.toplevel.fa  -nct 20 -I T01.sorted.bam   --genotyping_mode DISCOVERY -L Pt:1-135835  -o T01_Pt.vcf</div></pre></td></tr></table></figure>
+<h4 id="9-2-Call-SNPs-using-samtools"><a href="#9-2-Call-SNPs-using-samtools" class="headerlink" title="9.2. Call SNPs using samtools"></a>9.2. Call SNPs using samtools</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">samtools mpileup -ugf Fusarium_graminearum.RR1.fa -t AD -t DP -t SP T01.sorted_deduplicated.bam |bcftools call -vmO z -o T01.sorted_deduplicated.vcf.gz</div></pre></td></tr></table></figure>
+<h4 id="9-3-Call-SNPs-using-freebayes"><a href="#9-3-Call-SNPs-using-freebayes" class="headerlink" title="9.3. Call SNPs using freebayes"></a>9.3. Call SNPs using freebayes</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">freebayes -f Fusarium_graminearum.RR1.fa T01.sorted_deduplicated.bam &gt; T01.sorted_deduplicated.vcf</div></pre></td></tr></table></figure>
+<p>freebayes产生的VCF文件中INFO一列有专门的一个tag来注释是snp、ins（插入）、del（缺失）、mnp（连续两个snp位点，如ref为AT， alt为CG）以及complex（composite insetion and substitution events）<br>所以只要用下面的shell命令即可提取SNP<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">grep &apos;TYPE=snp&apos; freebayes_raw.vcf &gt; freebayes_snp_raw.vcf</div></pre></td></tr></table></figure></p>
+<h3 id="10-Filt-variants"><a href="#10-Filt-variants" class="headerlink" title="10. Filt variants"></a>10. Filt variants</h3><h4 id="10-1-filt-using-GATK"><a href="#10-1-filt-using-GATK" class="headerlink" title="10.1. filt using GATK"></a>10.1. filt using GATK</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">java -Xmx20g  -jar GenomeAnalysisTK.jar  -T VariantFiltration -R Fusarium_graminearum.RR1.fa  -V T01.vcf --filterExpression  &quot;QD &lt; 2.0 || FS &gt; 60.0 || ReadPosRankSum &lt; -8.0&quot; --filterName &quot;vcf_filter&quot; -o T01_filt.vcf</div></pre></td></tr></table></figure>
+<p><a href="https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_gatk_tools_walkers_filters_VariantFiltration.php" target="_blank" rel="external">VariantFiltration usage example</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">java -jar GenomeAnalysisTK.jar \</div><div class="line">   -T VariantFiltration \</div><div class="line">   -R reference.fasta \</div><div class="line">   -o output.vcf \</div><div class="line">   --variant input.vcf \</div><div class="line">   --filterExpression &quot;AB &lt; 0.2 || MQ0 &gt; 50&quot; \</div><div class="line">   --filterName &quot;SomeFilterName&quot;</div></pre></td></tr></table></figure>
+<h4 id="10-2-filt-using-bcftools"><a href="#10-2-filt-using-bcftools" class="headerlink" title="10.2. filt using bcftools"></a>10.2. filt using bcftools</h4><p>下面就简单的过滤QUAL小于10，DP值小于5，INDEL附近的位点<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bcftools filter -O v -o bcftools_filter.vcf -s LOWQUAL -e &apos;QUAL&lt;10 || FMT/DP &lt;5&apos; --SnpGap 5 --set-GTs . bcftools_raw.vcf.gz</div></pre></td></tr></table></figure></p>
+<p>提取过滤后的SNP位点<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bcftools view -v snps bcftools_filter.vcf &gt;bcftools_snp_filter.vcf</div></pre></td></tr></table></figure></p>
+<p>或者在vcf文件中INFO列里，如果是INDEL的话，会标注出INDEL，因此提取SNP也可以：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">grep -v &apos;INDEL&apos; bcftools_fiter.vcf &gt;bcftools_snp_filter.vcf</div></pre></td></tr></table></figure></p>
+<p>注意：</p>
+<ul>
+<li>&amp;&amp;与&amp; 区别：两者都表示“与”运算，但是&amp;&amp;运算符第一个表达式不成立的话，后面的表达式不运算，直接返回。而&amp;对所有表达式都得判断。</li>
+<li>|| 与| 区别：两者都表示“或”运算，但是||运算符第一个表达式成立的话，后面的表达式不运算，直接返回。而|对所有表达式都得判断。</li>
+</ul>
+<h3 id="11-Combine-variants-from-mutiple-samples"><a href="#11-Combine-variants-from-mutiple-samples" class="headerlink" title="11. Combine variants from mutiple samples"></a>11. Combine variants from mutiple samples</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">java -Xmx20g -jar GenomeAnalysisTK.jar -T CombineVariants -R  Fusarium_graminearum.RR1.fa --variant T01_filt.vcf  --variant T02_filt.vcf -o T01_T02.vcf -genotypeMergeOptions UNIQUIFY</div></pre></td></tr></table></figure>
+<ul>
+<li>parameter <a href="https://software.broadinstitute.org/gatk/documentation/tooldocs/current/org_broadinstitute_gatk_tools_walkers_variantutils_CombineVariants.php" target="_blank" rel="external">genotypeMergeOptions</a>:</li>
+</ul>
+<p>Determines how we should merge genotype records for samples shared across the ROD files<br>The –genotypemergeoption argument is an enumerated type (GenotypeMergeType), which can have one of the following values:</p>
+<ul>
+<li>UNIQUIFY<br>Make all sample genotypes unique by file. Each sample shared across RODs gets named sample.ROD.</li>
+<li>PRIORITIZE<br>Take genotypes in priority order (see the priority argument).</li>
+<li>UNSORTED<br>Take the genotypes in any order.</li>
+<li>REQUIRE_UNIQUE<br>Require that all samples/genotypes be unique between all inputs.</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/12/19/RNA_variant/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
   
     <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
