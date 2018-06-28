@@ -143,6 +143,61 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Download_SRA_data_parallelly" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Download-SRA-data-parallelly"><a href="#Download-SRA-data-parallelly" class="headerlink" title="Download SRA data parallelly"></a>Download SRA data parallelly</h2><h3 id="download-edirect"><a href="#download-edirect" class="headerlink" title="download edirect"></a>download edirect</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ wget ftp://ftp.ncbi.nlm.nih.gov/entrez/entrezdirect/edirect.zip</div><div class="line">unzip edirect &amp;&amp; cd edirect/</div></pre></td></tr></table></figure>
+<h3 id="Construct-the-links-for-tools-to-the-PATH"><a href="#Construct-the-links-for-tools-to-the-PATH" class="headerlink" title="Construct the links for tools to the PATH"></a>Construct the links for tools to the PATH</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ ln -s /home/wzk/anaconda3/envs/evolution/bin/edirect/esearch /home/wzk/anaconda3/envs/evolution/bin/esearch</div><div class="line">$ ln -s /home/wzk/anaconda3/envs/evolution/bin/edirect/edirect.pl  /home/wzk/anaconda3/envs/evolution/bin/edirect.pl</div><div class="line">$ ln -s /home/wzk/anaconda3/envs/evolution/bin/edirect/efetch  /home/wzk/anaconda3/envs/evolution/bin/efetch</div></pre></td></tr></table></figure>
+<p>or set the PATH enviroment</p>
+<h3 id="To-get-the-SRR-numbers-associated-with-the-project"><a href="#To-get-the-SRR-numbers-associated-with-the-project" class="headerlink" title="To get the SRR numbers associated with the project"></a>To get the SRR numbers associated with the project</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ esearch -db sra -query PRJNA301162 | efetch --format runinfo |cut -d &quot;,&quot; -f 1 &gt; SRR.numbers</div></pre></td></tr></table></figure>
+<p><strong>PRJNA301162</strong> is a project name</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ head  -n 5 SRR.numbers</div><div class="line"></div><div class="line">Run</div><div class="line">SRR2927328</div><div class="line">SRR2927329</div><div class="line">SRR2927330</div><div class="line">SRR2927331</div></pre></td></tr></table></figure>
+<h3 id="download-parallel"><a href="#download-parallel" class="headerlink" title="download parallel"></a>download <a href="http://www.gnu.org/software/parallel/" target="_blank" rel="external">parallel</a></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">conda install -c bioconda parallel</div></pre></td></tr></table></figure>
+<h4 id="Rust-parallel-and-tutorial"><a href="#Rust-parallel-and-tutorial" class="headerlink" title="Rust parallel and tutorial"></a><a href="https://github.com/mmstick/parallel" target="_blank" rel="external">Rust parallel and tutorial</a></h4><h3 id="To-download-SRA-data-in-parallel"><a href="#To-download-SRA-data-in-parallel" class="headerlink" title="To download SRA data in parallel"></a>To download SRA data in parallel</h3><p>download 2 files at the same time using parallel<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ parallel --jobs 2 &quot;fastq-dump --split-files --origfmt --gzip &#123;&#125;&quot; ::: SRR2927328 SRR2927329</div></pre></td></tr></table></figure></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/06/28/Download_SRA_data_parallelly/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-hexo_markdown_math" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
