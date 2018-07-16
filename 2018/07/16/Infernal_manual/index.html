@@ -6,14 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.wuzhikun.cn">
-  <title>Archives: 2018 | Biogeek</title>
+  <title>Biogeek</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
+  <meta name="description" content="Infernal ManualIn this tutorial, we doanload all bacterial genomes from NCBI.And then extract the sequence of 16S rRNA gene based on the sequence modelwith STOCKHOLM format using infernal. Download ba">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Biogeek">
-<meta property="og:url" content="http://www.wuzhikun.cn/archives/2018/index.html">
+<meta property="og:url" content="http://www.wuzhikun.cn/2018/07/16/Infernal_manual/index.html">
 <meta property="og:site_name" content="Biogeek">
+<meta property="og:description" content="Infernal ManualIn this tutorial, we doanload all bacterial genomes from NCBI.And then extract the sequence of 16S rRNA gene based on the sequence modelwith STOCKHOLM format using infernal. Download ba">
+<meta property="og:updated_time" content="2018-07-16T12:24:26.616Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Biogeek">
+<meta name="twitter:description" content="Infernal ManualIn this tutorial, we doanload all bacterial genomes from NCBI.And then extract the sequence of 16S rRNA gene based on the sequence modelwith STOCKHOLM format using infernal. Download ba">
   
     <link rel="alternative" href="/atom.xml" title="Biogeek" type="application/atom+xml">
   
@@ -141,169 +145,180 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Infernal_manual" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Infernal-Manual"><a href="#Infernal-Manual" class="headerlink" title="Infernal Manual"></a><a href="http://eddylab.org/infernal/" target="_blank" rel="external">Infernal</a> Manual</h1><p>In this tutorial, we doanload all bacterial genomes from NCBI.<br>And then extract the sequence of 16S rRNA gene based on the sequence model<br>with STOCKHOLM format using infernal.</p>
+<h2 id="Download-bacterial-genome-from-NCBI"><a href="#Download-bacterial-genome-from-NCBI" class="headerlink" title="Download bacterial genome from NCBI"></a>Download bacterial genome from NCBI</h2><p>First, we download the summary file for bacterial genomes from NCBI.<br>And then we extract the url of the genome form the summary file.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">$ curl &apos;ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/assembly_summary.txt&apos; &gt; assembly_summary.txt</div><div class="line"></div><div class="line">$ head -n 4  assembly_summary_20180715.txt</div><div class="line">#   See ftp://ftp.ncbi.nlm.nih.gov/genomes/README_assembly_summary.txt for a description of the columns in this file.</div><div class="line"># assembly_accession  bioproject  biosample wgs_master  refseq_category taxid species_taxid organism_name infraspecific_namisolate  version_status  assembly_level  release_type  genome_rep  seq_rel_date  asm_name  submitter gbrs_paired_asm paired_asm_comp ftp_path  excluded_from_refseq  relation_to_type_material</div><div class="line">GCF_000010525.1 PRJNA224116 SAMD00060925    representative genome 438753  7 Azorhizobium caulinodans ORS 571  strain=ORS 571    latest  Complete Genome Major Full  2007/10/16  ASM1052v1 University of Tokyo GCA_000010525.1 identical ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/010/525/GCF_000010525.1_ASM1052v1    assembly from type material</div><div class="line">GCF_000007365.1 PRJNA224116 SAMN02604269    representative genome 198804  9 Buchnera aphidicola str. Sg (Schizaphis graminum)strain=Sg    latest  Complete Genome Major Full  2002/07/02  ASM736v1  Uppsala Univ. GCA_000007365.1 identical ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/007/365/GCF_000007365.1_ASM736v1</div><div class="line"></div><div class="line"></div><div class="line">$ cat assembly_summary_20180715.txt |  awk &apos;&#123;FS=&quot;\t&quot;&#125; !/^#/ &#123;print $20&#125; &apos; | sed -r &apos;s|(ftp://ftp.ncbi.nlm.nih.gov/genomes/all/.+/)(GCF_.+)|\1\2/\2_genomic.fna.gz|&apos;  &gt; genomic_file_20180715.txt</div><div class="line"></div><div class="line"></div><div class="line">$ head -n 2  genomic_file_20180715.txt</div><div class="line">ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/010/525/GCF_000010525.1_ASM1052v1/GCF_000010525.1_ASM1052v1_genomic.fna.gz</div><div class="line">ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/007/365/GCF_000007365.1_ASM736v1/GCF_000007365.1_ASM736v1_genomic.fna.gz</div><div class="line"></div><div class="line">$ wget --input genomic_file_20180715.txt</div></pre></td></tr></table></figure></p>
+<h2 id="Install-infernal"><a href="#Install-infernal" class="headerlink" title="Install infernal"></a>Install infernal</h2><p>Install infernal through bioconda</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ conda install -c bioconda infernal</div></pre></td></tr></table></figure>
+<h2 id="Function-of-indernal"><a href="#Function-of-indernal" class="headerlink" title="Function of indernal"></a>Function of indernal</h2><ul>
+<li><strong>cmbuild</strong>: Build a covariance model from an input multiple alignment.</li>
+<li><strong>cmcalibrate</strong>: Calibrate E-value parameters for a covariance model.</li>
+<li><strong>cmsearch</strong>: Search a covariance model against a sequence database.</li>
+<li><strong>cmscan</strong>: Search a sequence against a covariance model database.</li>
+<li><strong>cmalign</strong>: Make a multiple alignment of many sequences to a common covariance model.</li>
+<li><strong>cmconvert</strong>: Convert CM formats to/from Infernal v1.1 format.</li>
+<li><strong>cmemit</strong>: Generate (sample) sequences from a covariance model.</li>
+<li><strong>cmfetch</strong>: Get a covariance model by name or accession from a CM database.</li>
+<li><strong>cmpress</strong>: Format a CM database into a binary format for cmscan.</li>
+<li><strong>cmstat</strong>: Show summary statistics for each model in a CM database.</li>
+</ul>
+<h2 id="Covariance-model-CM-for-bacterial-16S-rRNA-gene-from-Rfam"><a href="#Covariance-model-CM-for-bacterial-16S-rRNA-gene-from-Rfam" class="headerlink" title="Covariance model (CM) for bacterial 16S rRNA gene from Rfam"></a>Covariance model (CM) for bacterial 16S rRNA gene from <a href="http://rfam.xfam.org" target="_blank" rel="external">Rfam</a></h2><p>The seed file was downloded from Rfam.<br>A multiple alignment of bacterial 16S rRNA gene sequences. A simple example of<br>Stockholm format that Infernal uses for structurally-annotated alignments.</p>
+<h3 id="SSU-rRNA-bacteria-RF00177-seed"><a href="#SSU-rRNA-bacteria-RF00177-seed" class="headerlink" title="SSU_rRNA_bacteria (RF00177.seed)"></a>SSU_rRNA_bacteria (RF00177.seed)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div></pre></td><td class="code"><pre><div class="line"># STOCKHOLM 1.0</div><div class="line"></div><div class="line">#=GF AC   RF00177</div><div class="line">#=GF ID   SSU_rRNA_bacteria</div><div class="line">#=GF PI   SSU_rRNA_5</div><div class="line">#=GF DE   Bacterial small subunit ribosomal RNA</div><div class="line">#=GF AU   Gutell RR, Nawrocki E</div><div class="line">#=GF SE   Published; PMID:11869452</div><div class="line">#=GF SS   Published; PMID:11869452</div><div class="line">#=GF GA   50.00</div><div class="line">#=GF TC   50.00</div><div class="line">#=GF NC   49.90</div><div class="line">#=GF TP   Gene; rRNA;</div><div class="line">#=GF BM   cmbuild -F CM SEED</div><div class="line">#=GF CB   cmcalibrate --mpi CM</div><div class="line">#=GF SM   cmsearch --cpu 4 --verbose --nohmmonly -T 17.38 -Z 549862.597050 --mxsize</div><div class="line">#=GF SM   128 CM SEQDB</div><div class="line">#=GF CL   CL00111</div><div class="line">#=GF DR   URL; http://www.rna.ccbb.utexas.edu/;</div><div class="line">#=GF DR   URL; http://oberon.fvms.ugent.be:8080/rRNA/ssu/index.html;</div><div class="line">#=GF DR   URL; http://rdp.cme.msu.edu/html/;</div><div class="line">#=GF DR   SO; 0001263; ncRNA_gene;</div><div class="line">#=GF DR   GO; 0003735; structural constituent of ribosome;</div><div class="line">#=GF DR   GO; 0005840; ribosome;</div><div class="line">#=GF RN   [1]</div><div class="line">#=GF RM   11283358</div><div class="line">#=GF RT   Crystal structure of the ribosome at 5.5 A resolution.</div><div class="line">#=GF RA   Yusupov MM, Yusupova GZ, Baucom A, Lieberman K, Earnest TN, Cate JH,</div><div class="line">#=GF RA   Noller HF</div><div class="line">#=GF RL   Science 2001;292:883-896.</div><div class="line">#=GF RN   [2]</div><div class="line">#=GF RM   11869452</div><div class="line">#=GF RT   The comparative RNA web (CRW) site: an online database of comparative</div><div class="line">#=GF RT   sequence and structure information for ribosomal, intron, and other RNAs.</div><div class="line">#=GF RA   Cannone JJ, Subramanian S, Schnare MN, Collett JR, D&apos;Souza LM, Du Y, Feng</div><div class="line">#=GF RA   B, Lin N, Madabusi LV, Muller KM, Pande N, Shang Z, Yu N, Gutell RR</div><div class="line">#=GF RL   BMC Bioinformatics. 2002;3:2.</div><div class="line">#=GF WK   Ribosomal_RNA</div><div class="line">#=GF SQ   99</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">AY138309.1/1-1552                      UUAUUGGAGAGUU-UGAU-CCUGGCUCAGGAUGAACGCU-GG-CGG--CGUG-CCUAAUACAUGCAAGUCGAGCG-AAUG---------GAUUAAGAGCU-----UG</div><div class="line">AEZG01000028.1/4341-5872               UGUUUGGAGAGUU-UGAU-CCUGGCUCAGGACGAACGCU-GG-CGG--CGUG-CUUAACACAUGCAAGUCGAACG-GAA------------AGGUCUCUU-----CG</div><div class="line">ABKZ01000640.1/5030-3495               GAACUGAAGAGUU-UGAU-CAUGGCUCAGAUUGAACGCU-GG-CGG--CAGG-CCUAACACAUGCAAGUCGAGCG-GAU-----------GAAGGGAGCU-----UG</div><div class="line">AAFJ01000008.1/10852-9340              ACUAUGGAGAGUU-UGAU-CCUGGCUCAGAGUGAACGCU-GG-CGG--CGUG-CCUAAUACAUGCAAGUCGAACG-AUGA---------AGCUUCUAGCU-----UG</div><div class="line">GU260705.1/11747-13300                 UAACAUGAGAGUU-UGAU-CCUGGCUCAGAAUCAACGCU-GG-CGG--CGUG-CCUAACACAUGCAAGUCGAACG-CGA------------GGGUCCCGC-----AA</div><div class="line">CP001205.1/442210-440675               AUAACGAAGAGUU-UGAU-CCUGGCUUAGAACUAACGCU-GG-CAG--UGCG-UCUUAAGCAUGCAAGUCAAACG----------------GGAUGUAGC-----AA</div><div class="line">AC149043.3/15235-16757                 ACAAUGGAGAGUU-UGAU-CCUGGCUCAGGAUGAACGCU-AG-CGG--CAGG-CCUAAUACAUGCAAGUCGAACG-GGC-----------UUUGGGACUU-----CG</div><div class="line">EU123923.1/77-1583                     AAACUUGAGAGUU-UGAU-CCUGGCUCAGAACGAACGCU-GG-CGG--CAAG-CCUAACACAUGCAAGUCGAACG-GACAAU-----UAUUUAUAGCCUC-----U-</div><div class="line">CP001634.1/1770527-1772065             UGGAUGGAGGGUU-UGAU-CCUGGCUCAGGGUGAACGCU-GG-CGG--CGUG-CCUGACACAUGCAAGUCGUACG-GGC------------GGACCCCCU-----UC</div><div class="line">ADVG01000004.1/1323946-1322469         UGAAUGGCGAGUU-UGAU-CCUGGCUCAGGAUAAACGCU-GG-CGG--CGUG-CCUAACACAUGCAAGUCGAACG----------------CCCUCUCGC-----AA</div><div class="line">AFPX01000069.1/35-1566                 ACAAUGGAGAGUU-UGAU-CCUGGCUCAGGAUGAACGCU-GG-CUA--CAGG-CUUAACACAUGCAAGUCGUGGG-GAAACG------GCAUUAUGUGCU-----UG</div><div class="line">AF211138.2/108-1652                    UUUCUUAUGAGUU-UGAU-CAUAGCUCAGAUUGAACGCU-AG-CGA--CAAG-CCUAACACAUGCAAGUUGUGCG-AAU------------UAUUUUAUU----AAA</div><div class="line">ACIN02000006.1/16266-14733             UUAUAUGAGAGUU-UGAU-CCUGGCUCAGGAUGAACGCU-GG-CGG--CGUG-CCUAACACAUGCAAGUCGAACG-GAGA---------UUACGGACGGA-----AG</div><div class="line">AJ965256.1/805037-803541               AGCUUGGAGAGUU-UGAU-CCUGGCUCAGGAUGAACGCU-AG-CGG--CGUG-CCUUAUGCAUGCAAGUCGAACG----------------GUCUUAAGC-----AA</div><div class="line">CP002458.1/700517-699005               UUUUUCGAGAGUU-UGAU-CCUGGCUCAGGAUGAACGCU-GG-CUG--UGUG-CCUAAUACAUGCAUGUCGAGCG-----------------AAGGUAGC-----AA</div><div class="line">CP001100.1/908786-907295               ACAACGGAGAGUU-UGAU-CCUGGCUCAGGACGAACGCU-GG-CGG--CGUG-CCUAACACAUGCAAGCCAAAGG-AA-----------------AGCUU-----CG</div><div class="line">FQ859183.1/1179117-1180628             ACGAUGAAGAGUU-UGAU-CCUGGCUCAGGAUGAACGCU-AG-CGG--CAGG-CUUAACACAUGCAAGUCGAGGG---G------------UAUAGUAGC-----AA</div><div class="line">AAYP01000003.1/232298-233810           AUUUUAAAGAGUU-UGAU-CCUGGCUCAGGAUUAACGCU-GG-CGG--CAUG-CCUAAUACAUGCAAAUCGAACG-----------------AAGCCUUU-----U-</div></pre></td></tr></table></figure>
+<h3 id="RF00177-seed-calibrated-using-cmcalibrate"><a href="#RF00177-seed-calibrated-using-cmcalibrate" class="headerlink" title="RF00177.seed calibrated using cmcalibrate"></a>RF00177.seed calibrated using cmcalibrate</h3><p>An example CM file. Built with <strong>cmbuild</strong> from <strong>RF00177.seed</strong> and calibrated using<br><strong>cmcalibrate</strong> (from infernal).<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">INFERNAL1/a [1.1.1 | July 2014]</div><div class="line">NAME     SSU_rRNA_bacteria</div><div class="line">ACC      RF00177</div><div class="line">DESC     Bacterial small subunit ribosomal RNA</div><div class="line">STATES   4758</div><div class="line">NODES    1197</div><div class="line">CLEN     1533</div><div class="line">W        1614</div><div class="line">ALPH     RNA</div><div class="line">RF       no</div><div class="line">CONS     yes</div><div class="line">MAP      yes</div><div class="line">DATE     Mon Jan 29 03:19:39 2018</div><div class="line">COM      [1] /usr/lib/infernal/cmbuild RF00177.seed.sto RF00177.seed</div><div class="line">COM      [2] /usr/lib/infernal/cmcalibrate --cpu 20 RF00177.seed.cm</div><div class="line">PBEGIN   0.05</div><div class="line">PEND     0.05</div><div class="line">WBETA    1e-07</div><div class="line">QDBBETA1 1e-07</div><div class="line">QDBBETA2 1e-15</div><div class="line">N2OMEGA  1.52588e-05</div><div class="line">N3OMEGA  1.52588e-05</div><div class="line">ELSELF   -0.08926734</div><div class="line">NSEQ     99</div><div class="line">EFFN     1.211517</div><div class="line">CKSUM    2093381478</div><div class="line">NULL     0.000  0.000  0.000  0.000 </div><div class="line">GA       50.00</div><div class="line">TC       50.00</div><div class="line">NC       49.90</div><div class="line">EFP7GF   -64.8752 0.69565</div><div class="line">ECMLC    0.73722    -8.18519    -0.75556     1600000      287021  0.004181</div><div class="line">ECMGC    0.06157  -327.82681  -314.36942     1600000         916  0.436681</div><div class="line">ECMLI    0.74522    -7.73085    -0.46568     1600000      269471  0.004453</div><div class="line">ECMGI    0.06634  -224.15868  -211.57094     1600000         922  0.433839</div><div class="line">                                             [ ROOT    0 ]      -      - - - - -</div><div class="line">     S     0    -1 0     1     4     0     1  1614  1738  -6.619  -6.826  -0.114  -4.139                 </div><div class="line">    IL     1     1 2     1     4  1270  1366  1616  1740  -1.686  -2.369  -1.117  -4.855                  0.000  0.000  0.000  0.000 </div><div class="line">    IR     2     2 3     2     3  1270  1366  1616  1740  -1.442  -0.798  -4.142                          0.000  0.000  0.000  0.000</div></pre></td></tr></table></figure></p>
+<h2 id="Infernal-manuals"><a href="#Infernal-manuals" class="headerlink" title="Infernal manuals"></a>Infernal manuals</h2><h3 id="Get-CM-file-from-msafile-using-cmbuild"><a href="#Get-CM-file-from-msafile-using-cmbuild" class="headerlink" title="Get CM file from msafile using cmbuild"></a>Get CM file from msafile using cmbuild</h3><h4 id="Run-cmbuild"><a href="#Run-cmbuild" class="headerlink" title="Run cmbuild"></a>Run cmbuild</h4><p>take the example of tRNAs<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">$ cmbuild test/tRNA5.cm  test/tRNA5.sto </div><div class="line"># cmbuild :: covariance model construction from multiple sequence alignments</div><div class="line"># INFERNAL 1.1.2 (July 2016)</div><div class="line"># Copyright (C) 2016 Howard Hughes Medical Institute.</div><div class="line"># Freely distributed under a BSD open source license.</div><div class="line"># - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line"># CM file:                                            test/tRNA5.cm</div><div class="line"># alignment file:                                     test/tRNA5.sto</div><div class="line"># - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line">#                                                                      rel entropy</div><div class="line">#                                                                      -----------</div><div class="line"># idx    name                     nseq eff_nseq   alen  clen  bps bifs    CM   HMM description</div><div class="line"># ------ -------------------- -------- -------- ------ ----- ---- ---- ----- ----- -----------</div><div class="line">       1 tRNA5                       5     3.73     74    72   21    2 0.783 0.489 </div><div class="line">#</div><div class="line"># CPU time: 0.45u 0.00s 00:00:00.45 Elapsed: 00:00:00.52</div></pre></td></tr></table></figure></p>
+<h3 id="cmcalibrate"><a href="#cmcalibrate" class="headerlink" title="cmcalibrate"></a>cmcalibrate</h3><h4 id="Parameters-for-cmcalibrate"><a href="#Parameters-for-cmcalibrate" class="headerlink" title="Parameters for cmcalibrate"></a>Parameters for cmcalibrate</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">$ cmcalibrate --help</div><div class="line">Failed to parse command line: No such option &quot;--help&quot;.</div><div class="line">Usage: cmcalibrate [-options] &lt;cmfile&gt;</div><div class="line"></div><div class="line">where basic options are:</div><div class="line">  -h     : show brief help on version and usage</div><div class="line">  -L &lt;x&gt; : set random seq length to search in Mb to &lt;x&gt;  [1.6]  (0.01&lt;=x&lt;=160.)</div><div class="line"></div><div class="line">To see more help on available options, do cmcalibrate -h</div></pre></td></tr></table></figure>
+<h4 id="Run-cmcalibrate"><a href="#Run-cmcalibrate" class="headerlink" title="Run cmcalibrate"></a>Run cmcalibrate</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">$ cmcalibrate --forecast test/tRNA5.cm</div><div class="line"># cmcalibrate :: fit exponential tails for CM E-values</div><div class="line"># INFERNAL 1.1.2 (July 2016)</div><div class="line"># Copyright (C) 2016 Howard Hughes Medical Institute.</div><div class="line"># Freely distributed under a BSD open source license.</div><div class="line"># - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line"># CM file:                                     test/tRNA5.cm</div><div class="line"># forecast mode (no calibration):              on</div><div class="line"># - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line">#</div><div class="line"># Forecasting running time for CM calibration(s) on 40 cpus:</div><div class="line">#</div><div class="line">#                          predicted</div><div class="line">#                       running time</div><div class="line"># model name            (hr:min:sec)</div><div class="line"># --------------------  ------------</div><div class="line">  tRNA5                     00:00:46</div><div class="line">#</div><div class="line"># CPU time: 0.20u 0.00s 00:00:00.20 Elapsed: 00:00:00.22</div><div class="line">[ok]</div></pre></td></tr></table></figure>
+<h3 id="Run-cmsearch-to-search-target-sequence-in-genome"><a href="#Run-cmsearch-to-search-target-sequence-in-genome" class="headerlink" title="Run cmsearch to search target sequence in genome"></a>Run cmsearch to search target sequence in genome</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cmsearch /home/wzk/database/Bacterial_genome/infernal_test/RF00177.seed.cm  /home/wzk/database/Bacterial_genome/species/GCF_900241005.1_PRJEB22714_genomic.fna &gt; test_result</div></pre></td></tr></table></figure>
+<p>output file:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"># cmsearch :: search CM(s) against a sequence database</div><div class="line"># INFERNAL 1.1.1 (July 2014)</div><div class="line"># Copyright (C) 2014 Howard Hughes Medical Institute.</div><div class="line"># Freely distributed under the GNU General Public License (GPLv3).</div><div class="line"># - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line"># query CM file:                         /home/wzk/database/Bacterial_genome/seeds/RF00177.seed.cm</div><div class="line"># target sequence database:              /home/wzk/database/Bacterial_genome/Bacteria_16S/species_temp/GCF_900251075.1_M3095_genomic.fna</div><div class="line"># number of worker threads:              40</div><div class="line"># - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line"></div><div class="line">Query:       SSU_rRNA_bacteria  [CLEN=1533]</div><div class="line">Accession:   RF00177</div><div class="line">Description: Bacterial small subunit ribosomal RNA</div><div class="line">Hit scores:</div><div class="line"> rank     E-value  score  bias  sequence           start    end   mdl trunc   gc  description</div><div class="line"> ----   --------- ------ -----  ----------------- ------ ------   --- ----- ----  -----------</div><div class="line">  (1) !         0 1632.1   1.8  NZ_OGBY01000003.1     49   1600 +  cm    no 0.51  Staphylococcus aureus strain M3095 isolate M3095, whole geno</div><div class="line">  (2) !   9.2e-17   60.3   0.0  NZ_OGBY01000041.1    284    223 -  cm    5&apos; 0.53  Staphylococcus aureus strain M3095 isolate M3095, whole geno</div><div class="line">  (3) !   9.8e-11   41.6   0.0  NZ_OGBY01000027.1     50      1 -  cm    3&apos; 0.54  Staphylococcus aureus strain M3095 isolate M3095, whole geno</div><div class="line">  (4) !   1.3e-05   25.8   0.0  NZ_OGBY01000006.1 179423 179457 +  cm    3&apos; 0.46  Staphylococcus aureus strain M3095 isolate M3095, whole geno</div><div class="line"></div><div class="line">Hit alignments:</div><div class="line">&gt;&gt; NZ_OGBY01000003.1  Staphylococcus aureus strain M3095 isolate M3095, whole genome shotgun sequence</div><div class="line"> rank     E-value  score  bias mdl mdl from   mdl to       seq from      seq to       acc trunc   gc</div><div class="line"> ----   --------- ------ ----- --- -------- --------    ----------- -----------      ---- ----- ----</div><div class="line">  (1) !         0 1632.1   1.8  cm        1     1533 []          49        1600 + .. 0.99    no 0.51</div><div class="line"></div><div class="line">                                                                                              v    v                NC</div><div class="line">                         ::::::::&lt;&lt;&lt;&lt;&lt;_______&gt;&gt;&gt;&gt;&gt;,&#123;&#123;&#123;&#123;-&#123;&#123;&#123;&#123;&#123;&#123;,&#123;&#123;&#123;&#123;&#123;&#123;&#123;&#123;&#123;----&#123;&#123;&#123;-&#123;&#123;&#123;,,&lt;&lt;&lt;--&lt;&lt;&lt;&lt;&lt;-...&lt;&lt;&lt;&lt;&lt;&lt;&lt;____&gt;&gt;&gt;&gt;&gt; CS</div><div class="line">  SSU_rRNA_bacteria    1 uuuauggAGaGuuUGAUCcUggCuCAGggcGaaCGCuGGCGGcgcGcuUaAcaCAuGCAAGuCGagcccca...cggggccuuaaggccc 87  </div><div class="line">                         UUUAUGGAGAGUUUGAUCCUGGCUCAGG::GAACGCUGGCGGCG:GC+UAA:ACAUGCAAGUCGAGC::      G:G::: U++:::C:</div><div class="line">  NZ_OGBY01000003.1   49 UUUAUGGAGAGUUUGAUCCUGGCUCAGGAUGAACGCUGGCGGCGUGCCUAAUACAUGCAAGUCGAGCGAACggaCGAGAAGCUUGCUUCU 138 </div><div class="line">                         ********************************************************************8866888999999999999999 PP</div><div class="line"></div><div class="line">                          v    v                       v                              v                v            NC</div><div class="line">                         &gt;&gt;...-&gt;&gt;-&gt;&gt;&gt;&gt;&gt;&gt;,,,,,,[[[,,,,,,((((((((--((---(((((((,&lt;&lt;&lt;&lt;----&lt;&lt;&lt;&lt;&lt;&lt;&lt;____&gt;&gt;&gt;&gt;&gt;&gt;&gt;-----&gt;&gt;&gt;&gt;,, CS</div><div class="line">  SSU_rRNA_bacteria   88 cg...agggggcGgCGaAcGGGuGAGUAAcgCGcgggcAAccUacCcccgggugcgGgAUAccccccgGAAAcggggggUAAUACcgcAU 174 </div><div class="line">                         C      :+:GCGGCG ACGGGUGAGUAAC CG:GG::AACCUACC:::::G+::GGGAUA C: C:GGAAAC:G :G UAAUACC::AU</div><div class="line">  NZ_OGBY01000003.1  139 CUgau-GUUAGCGGCGGACGGGUGAGUAACACGUGGAUAACCUACCUAUAAGACUGGGAUAACUUCGGGAAACCGGAGCUAAUACCGGAU 227 </div><div class="line">                         98774.555********************************************************************************* PP</div><div class="line"></div><div class="line">                                                                                           v                        NC</div><div class="line">                         ,,,&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;____&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;.&gt;,,,,&lt;&lt;&lt;...._____&gt;&gt;&gt;,)))))))--))))))))))&lt;&lt;&lt;--&lt;-&lt;&lt;&lt;--&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;___ CS</div><div class="line">  SSU_rRNA_bacteria  175 aaugccccggcccguaugggccgggg.cuAAAGgc....auuuagcCGcccgggGAugggcccgCGccccAUcAGcuAGuuGGuggGGUA 259 </div><div class="line">                         AAU:::::G::CCG+AUGG::C:::: : AAAG:C    +U ++G:C C:::::GAUGG::CC:CG ::CAU:AGCUAGUUGGU::GGUA</div><div class="line">  NZ_OGBY01000003.1  228 AAUAUUUUGAACCGCAUGGUUCAAAAgUGAAAGACggucUUGCUGUCACUUAUAGAUGGAUCCGCGCUGCAUUAGCUAGUUGGUAAGGUA 317 </div><div class="line">                         **********************9765389*******97555555********************************************** PP</div></pre></td></tr></table></figure></p>
+<h3 id="Align-the-sequence-derived-from-cmsearch"><a href="#Align-the-sequence-derived-from-cmsearch" class="headerlink" title="Align the sequence derived from cmsearch"></a>Align the sequence derived from cmsearch</h3><p>If we had the CM file <strong>tRNA5.c.cm</strong>, and we also got the seqeunce file <strong>mrum-tRNAs10.fa</strong><br>form based on this CM file using <strong>cmsearch</strong>. Now we can align the sequence using <strong>cmalign</strong> basd on this CM file.</p>
+<p>input fasta file </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">$ head mrum-tRNAs10.fa</div><div class="line">&gt;mrum-tRNA.1</div><div class="line">GGAGCUAUAGCUCAAUGGCAGAGCGUUUGGCUGACAUCCAAAAGGUUAUGGGUUCGAUUC</div><div class="line">CCUUUAGCCCCA</div><div class="line">&gt;mrum-tRNA.2</div><div class="line">GGGCCCGUAGCUCAGUUGGGAGAGCGCUGCCCUUGCAAGGCAGAGGCCCCGGGUUCAAAU</div><div class="line">CCCGGUGGGUCCA</div><div class="line">&gt;mrum-tRNA.3</div><div class="line">GGGCCCAUAGCUUAGCCAGGUAGAGCGCUCGGCUCAUAACCGGGAUGUCAUGGGUUCGAA</div><div class="line">UCCCAUUGGGCCCA</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">$ cmalign tRNA5.c.cm mrum-tRNAs10.fa &gt; mrum-tRNAs10.out</div><div class="line"></div><div class="line">$ head mrum-tRNAs10.out</div><div class="line"># STOCKHOLM 1.0</div><div class="line">#=GF AU Infernal 1.1.2</div><div class="line"></div><div class="line">mrum-tRNA.1          GGAGCUAUAGCUCAAU..GGC..AGAGCGUUUGGCUGACAU........................................CCAAAAGGUUAUGGGUUCGAUUCCCUUUAGCCCCA</div><div class="line">#=GR mrum-tRNA.1  PP ****************..***..******************........................................***********************************</div><div class="line">mrum-tRNA.2          GGGCCCGUAGCUCAGU.uGGG..AGAGCGCUGCCCUUGCAA........................................GGCAGAGGCCCCGGGUUCAAAUCCCGGUGGGUCCA</div><div class="line">#=GR mrum-tRNA.2  PP ****************.****..******************........................................***********************************</div><div class="line">mrum-tRNA.3          GGGCCCAUAGCUUAGCcaGGU..AGAGCGCUCGGCUCAUAA........................................CCGGGAUGUCAUGGGUUCGAAUCCCAUUGGGCCCA</div><div class="line">#=GR mrum-tRNA.3  PP *********************..******************........................................***********************************</div><div class="line">mrum-tRNA.4          AGGCUAGUGGCACAGCcuGGU.cAGCGCGCACGGCUGAUAA........................................CCGUGAGGUCCUGGGUUCGAAUCCCAGCUAGCCUA</div></pre></td></tr></table></figure>
+<h4 id="Now-we-can-re-build-CM-file-based-on-the-file-mrum-tRNAs10-out"><a href="#Now-we-can-re-build-CM-file-based-on-the-file-mrum-tRNAs10-out" class="headerlink" title="Now we can re-build CM file based on the file mrum-tRNAs10.out"></a>Now we can re-build CM file based on the file <strong>mrum-tRNAs10.out</strong></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">$ cmbuild mrum-tRNAs10.cm mrum-tRNAs10.out</div><div class="line"></div><div class="line"># cmbuild :: covariance model construction from multiple sequence alignments</div><div class="line"># INFERNAL 1.1.2 (July 2016)</div><div class="line"># Copyright (C) 2016 Howard Hughes Medical Institute.</div><div class="line"># Freely distributed under a BSD open source license.</div><div class="line"># - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line"># CM file:                                            mrum-tRNAs10.cm</div><div class="line"># alignment file:                                     mrum-tRNAs10.out_201807</div><div class="line"># - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line">#                                                                      rel entropy</div><div class="line">#                                                                      -----------</div><div class="line"># idx    name                     nseq eff_nseq   alen  clen  bps bifs    CM   HMM description</div><div class="line"># ------ -------------------- -------- -------- ------ ----- ---- ---- ----- ----- -----------</div><div class="line">       1 mrum-tRNAs10               10     3.15    116    74   21    2 0.762 0.486 </div><div class="line">#</div><div class="line"># CPU time: 0.47u 0.00s 00:00:00.47 Elapsed: 00:00:00.50</div></pre></td></tr></table></figure>
+<h2 id="Search-genome-based-on-Rfam-CM-files"><a href="#Search-genome-based-on-Rfam-CM-files" class="headerlink" title="Search genome based on Rfam CM files"></a>Search genome based on Rfam CM files</h2><h3 id="Download-all-Rfam-seeds"><a href="#Download-all-Rfam-seeds" class="headerlink" title="Download all Rfam seeds"></a>Download all Rfam seeds</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ wget ftp://ftp.ebi.ac.uk/pub/databases/Rfam/14.0/Rfam.cm.gz</div><div class="line">$ gunzip Rfam.cm.gz</div></pre></td></tr></table></figure>
+<h3 id="Stats-for-all-CM-files"><a href="#Stats-for-all-CM-files" class="headerlink" title="Stats for all CM files"></a>Stats for all CM files</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">$ cmstat Rfam.cm | head -n 15</div><div class="line"># cmstat :: display summary statistics for CMs</div><div class="line"># INFERNAL 1.1.1 (July 2014)</div><div class="line"># Copyright (C) 2014 Howard Hughes Medical Institute.</div><div class="line"># Freely distributed under the GNU General Public License (GPLv3).</div><div class="line"># - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line">#                                                                                              rel entropy</div><div class="line">#                                                                                             ------------</div><div class="line"># idx   name                  accession      nseq  eff_nseq   clen      W   bps  bifs  model     cm    hmm</div><div class="line"># ----  --------------------  ---------  --------  --------  -----  -----  ----  ----  -----  -----  -----</div><div class="line">     1  5S_rRNA               RF00001         712      7.35    119    194    34     1     cm  0.590  0.370</div><div class="line">     2  5_8S_rRNA             RF00002          61      3.62    154    203    25     3     cm  0.590  0.471</div><div class="line">     3  U1                    RF00003         100      4.43    166    197    40     3     cm  0.590  0.390</div><div class="line">     4  U2                    RF00004         208      5.46    193    229    45     4     cm  0.590  0.398</div><div class="line">     5  tRNA                  RF00005         954     67.04     71    259    21     2     cm  0.793  0.453</div><div class="line">     6  Vault                 RF00006          73      4.46    101    302    19     0     cm  0.590  0.469</div></pre></td></tr></table></figure>
+<h3 id="Fetch-one-certain-CM-file"><a href="#Fetch-one-certain-CM-file" class="headerlink" title="Fetch one certain CM file"></a>Fetch one certain CM file</h3><p>Based on all CM files, we can fetch one CM file based on the accession number from all CM files.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">$ cmfetch Rfam.cm RF00001 | head -n 20</div><div class="line">INFERNAL1/a [1.1.1 | July 2014]</div><div class="line">NAME     5S_rRNA</div><div class="line">ACC      RF00001</div><div class="line">STATES   366</div><div class="line">NODES    91</div><div class="line">CLEN     119</div><div class="line">W        194</div><div class="line">ALPH     RNA</div><div class="line">RF       no</div><div class="line">CONS     yes</div><div class="line">MAP      yes</div><div class="line">DATE     Thu Apr 10 16:29:08 2014</div><div class="line">COM      [1] /nfs/production/xfam/rfam/software/bin/cmbuild -F CM SEED</div><div class="line">COM      [2] /nfs/production/xfam/rfam/software/bin/cmcalibrate --mpi CM</div><div class="line">PBEGIN   0.05</div><div class="line">PEND     0.05</div><div class="line">WBETA    1e-07</div><div class="line">QDBBETA1 1e-07</div><div class="line">QDBBETA2 1e-15</div><div class="line">N2OMEGA  1.52588e-05</div></pre></td></tr></table></figure>
+<h3 id="Get-sequence-from-CM-file"><a href="#Get-sequence-from-CM-file" class="headerlink" title="Get sequence from CM file"></a>Get sequence from CM file</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">$ cmemit RF00001.cm | head -n 10</div><div class="line">&gt;5S_rRNA-sample1</div><div class="line">AAUACACCAUGCGGCGUAAAUGCACUAGACCUCAUUAUGGCCUUUACGGCUAAGCAUGCC</div><div class="line">UGUCUCAGCGGACUAGUGAGAUGGGUGGUCACAGGGGGUCG</div><div class="line">&gt;5S_rRNA-sample2</div><div class="line">GAUGAUGGCUAGAGAGCCACUUAAGCUCCUAAACACAUGACGUACUUAGUAGCUAACACU</div><div class="line">GGCACCGAUAUGGGAGUACCACGAUUGUCUUCAGACUGGGAACAUAUAUAGCUAUUUGGC</div><div class="line">A</div><div class="line">&gt;5S_rRNA-sample3</div><div class="line">UCUUGUAGCCAUGCCGGUUAGGAAGCACCCGAUCUCGUUUGAAAUCGGUAGUUAAGUAAU</div><div class="line">CUUGGAUGCCUGGUAUGUCGCUCCGUGAUGCUCAGCGAACUGGCCAAUGCUACAGUAC</div></pre></td></tr></table></figure>
+<h3 id="Compress-all-CM-files"><a href="#Compress-all-CM-files" class="headerlink" title="Compress all CM files"></a>Compress all CM files</h3><p>The <strong>cmscan</strong> program has to read a lot of CMs and their filter HMMs in a hurry, and Infernal’s ASCII flatfiles<br>are bulky. To accelerate this, <strong>cmscan</strong> uses binary compression and indexing of the flatfiles. To use <strong>cmscan</strong>,<br>you must first compress and index your CM database with the <strong>cmpress</strong> program:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ cmpress Rfam.cm</div><div class="line">Working...    done.</div><div class="line">Pressed and indexed 2686 CMs and p7 HMM filters (2686 names and 2686 accessions).</div><div class="line">Covariance models and p7 filters pressed into binary file:  Rfam.cm.i1m</div><div class="line">SSI index for binary covariance model file:                 Rfam.cm.i1i</div><div class="line">Optimized p7 filter profiles (MSV part)  pressed into:      Rfam.cm.i1f</div><div class="line">Optimized p7 filter profiles (remainder) pressed into:      Rfam.cm.i1p</div></pre></td></tr></table></figure>
+<p>output four files:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Rfam.cm.i1f</div><div class="line">Rfam.cm.i1i</div><div class="line">Rfam.cm.i1m</div><div class="line">Rfam.cm.i1p</div></pre></td></tr></table></figure></p>
+<h3 id="Run-cmscan"><a href="#Run-cmscan" class="headerlink" title="Run cmscan"></a>Run cmscan</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cmscan -Z 20000 Rfam.cm /home/wzk/database/Bacterial_genome/Bacteria_16S/species_temp/GCF_000350085.1_ASM35008v1_genomic.fna &gt; GCF_000350085.1_ASM35008v1_genomic.cmscan</div></pre></td></tr></table></figure>
+<p>output file:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"># cmscan :: search sequence(s) against a CM database</div><div class="line"># INFERNAL 1.1.1 (July 2014)</div><div class="line"># Copyright (C) 2014 Howard Hughes Medical Institute.</div><div class="line"># Freely distributed under the GNU General Public License (GPLv3).</div><div class="line"># - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line"># query sequence file:                   /home/wzk/database/Bacterial_genome/Bacteria_16S/species_temp/GCF_000350085.1_ASM35008v1_genomic.fna</div><div class="line"># target CM database:                    Rfam.cm</div><div class="line"># database size is set to:               1000.0 Mb</div><div class="line"># number of worker threads:              40</div><div class="line"># - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div><div class="line"></div><div class="line">Query:       NZ_CAUM01000191.1  [L=72994]</div><div class="line">Description: Mesorhizobium metallidurans STM 2683, whole genome shotgun sequence</div><div class="line">Hit scores:</div><div class="line"> rank     E-value  score  bias  modelname    start    end   mdl trunc   gc  description</div><div class="line"> ----   --------- ------ -----  ----------- ------ ------   --- ----- ----  -----------</div><div class="line">  (1) !   5.1e-05   43.4   0.0  Intron_gpII  15628  15530 -  cm    no 0.65  -</div><div class="line"> ------ inclusion threshold ------</div><div class="line">  (2) ?     0.027   33.7   0.0  ar14         48418  48530 +  cm    no 0.62  -</div><div class="line">  (3) ?       1.4   24.7   0.0  HIV_FS2      26111  26148 +  cm    no 0.55  -</div><div class="line">  (4) ?       1.9   21.9   0.0  EAV_LTH      24018  23979 -  cm    no 0.65  -</div><div class="line">  (5) ?       8.9   22.3   0.0  TB9Cs1H1     31773  31831 +  cm    no 0.66  -</div></pre></td></tr></table></figure></p>
+<p>All targeted results associated with rRNA<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">$ grep &apos;!&apos; GCF_000350085.1_ASM35008v1_genomic.cmscan | grep rRNA</div><div class="line">  (1) !         0 2803.2  32.8  LSU_rRNA_bacteria        3062   5859 +  cm    no 0.53  -</div><div class="line">  (2) !         0 1861.1  32.7  LSU_rRNA_archaea         3060   5859 +  cm    no 0.53  -</div><div class="line">  (3) !         0 1575.1  14.7  SSU_rRNA_bacteria         765   2249 +  cm    no 0.56  -</div><div class="line">  (4) !         0 1231.6  31.7  LSU_rRNA_eukarya         3275   5847 +  cm    no 0.54  -</div><div class="line">  (5) !         0 1080.3  15.8  SSU_rRNA_archaea          770   2247 +  cm    no 0.56  -</div><div class="line">  (6) !  8.1e-229  758.4  16.3  SSU_rRNA_microsporidia    770   2244 +  cm    no 0.56  -</div><div class="line">  (7) !  6.1e-214  719.1  16.3  SSU_rRNA_eukarya          770   2244 +  cm    no 0.56  -</div><div class="line">  (8) !     6e-14   77.3   0.0  5S_rRNA                  5956   6070 +  cm    no 0.63  -</div><div class="line"> (12) !   7.9e-06   38.1   0.0  5_8S_rRNA                3075   3219 +  cm    no 0.52  -</div></pre></td></tr></table></figure></p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/07/16/Infernal_manual/" class="archive-article-date">
-  	<time datetime="2018-07-16T12:24:49.796Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-16</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.wuzhikun.cn/2018/07/16/Infernal_manual/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/07/16/vsearch_manual/" class="archive-article-date">
-  	<time datetime="2018-07-16T12:24:26.620Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-16</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/07/10/Mutiple_sequence_alignment/" class="archive-article-date">
-  	<time datetime="2018-07-10T12:33:56.664Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-10</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+<nav id="article-nav">
+  
+  
+    <a href="/2018/07/16/vsearch_manual/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title"></div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/07/03/Fastq_and_sam_format/" class="archive-article-date">
-  	<time datetime="2018-07-03T15:03:11.911Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-03</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/06/28/Download_SRA_data_parallelly/" class="archive-article-date">
-  	<time datetime="2018-06-28T14:12:24.377Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-06-28</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+        
+        
+    </div>
+</aside>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/01/08/hexo_markdown_math/" class="archive-article-date">
-  	<time datetime="2018-01-08T11:49:10.303Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-01-08</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/01/02/G_Statistics_for_BSA/" class="archive-article-date">
-  	<time datetime="2018-01-02T12:07:34.904Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-01-02</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
   
-    </div></section>
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -326,8 +341,8 @@
 	var yiliaConfig = {
 		mathjax: [object Object],
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

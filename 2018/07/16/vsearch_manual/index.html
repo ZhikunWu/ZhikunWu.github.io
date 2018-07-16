@@ -6,14 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.wuzhikun.cn">
-  <title>Archives: 2018 | Biogeek</title>
+  <title>Biogeek</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
+  <meta name="description" content="Vsearch pipelinePipeline of 16S rDNA data analysis Quality control Merge paired-end reads Trip primers (and barcodes)  Dereplication Cluster Check chimeras Filter OTU Construct OTU table (abudance) Ta">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Biogeek">
-<meta property="og:url" content="http://www.wuzhikun.cn/archives/2018/index.html">
+<meta property="og:url" content="http://www.wuzhikun.cn/2018/07/16/vsearch_manual/index.html">
 <meta property="og:site_name" content="Biogeek">
+<meta property="og:description" content="Vsearch pipelinePipeline of 16S rDNA data analysis Quality control Merge paired-end reads Trip primers (and barcodes)  Dereplication Cluster Check chimeras Filter OTU Construct OTU table (abudance) Ta">
+<meta property="og:updated_time" content="2018-07-16T12:24:26.620Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Biogeek">
+<meta name="twitter:description" content="Vsearch pipelinePipeline of 16S rDNA data analysis Quality control Merge paired-end reads Trip primers (and barcodes)  Dereplication Cluster Check chimeras Filter OTU Construct OTU table (abudance) Ta">
   
     <link rel="alternative" href="/atom.xml" title="Biogeek" type="application/atom+xml">
   
@@ -141,169 +145,204 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-vsearch_manual" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Vsearch-pipeline"><a href="#Vsearch-pipeline" class="headerlink" title="Vsearch pipeline"></a><a href="https://github.com/torognes/vsearch/wiki/VSEARCH-pipeline" target="_blank" rel="external">Vsearch pipeline</a></h1><h2 id="Pipeline-of-16S-rDNA-data-analysis"><a href="#Pipeline-of-16S-rDNA-data-analysis" class="headerlink" title="Pipeline of 16S rDNA data analysis"></a>Pipeline of 16S rDNA data analysis</h2><ul>
+<li>Quality control</li>
+<li>Merge paired-end reads</li>
+<li>Trip primers (and barcodes) </li>
+<li>Dereplication</li>
+<li>Cluster</li>
+<li>Check chimeras</li>
+<li>Filter OTU</li>
+<li>Construct OTU table (abudance)</li>
+<li>Taxonomy assign</li>
+</ul>
+<h3 id="Vsearch-function"><a href="#Vsearch-function" class="headerlink" title="Vsearch function"></a>Vsearch function</h3><ul>
+<li>Chimera detection</li>
+<li>Clustering</li>
+<li>Dereplication and rereplication</li>
+<li>FASTQ format conversion</li>
+<li>FASTQ format detection and quality analysis</li>
+<li>FASTQ quality statistics</li>
+<li>Filtering</li>
+<li>Masking</li>
+<li>Paired-end reads merging</li>
+<li>Pairwise alignment</li>
+<li>Reverse complementation</li>
+<li>Searching</li>
+<li>Shuffling and sorting</li>
+<li>Subsampling</li>
+<li>UDB files</li>
+</ul>
+<h3 id="Merge-paired-end-sequence"><a href="#Merge-paired-end-sequence" class="headerlink" title="Merge paired-end sequence"></a>Merge paired-end sequence</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">$ vsearch --fastq_mergepairs V4test1.clean.paired.R1.fq \</div><div class="line">        --reverse V4test1.clean.paired.R2.fq  \</div><div class="line">        --fastqout V4test1.merge.fq  \</div><div class="line">        --threads 20  \</div><div class="line">        --fastq_minovlen 5 </div><div class="line"></div><div class="line">vsearch v2.6.0_linux_x86_64, 251.7GB RAM, 40 cores</div><div class="line">https://github.com/torognes/vsearch</div><div class="line"></div><div class="line">Merging reads 100%  </div><div class="line">   1110488  Pairs</div><div class="line">    886174  Merged (79.8%)</div><div class="line">    224314  Not merged (20.2%)</div><div class="line"></div><div class="line">Pairs that failed merging due to various reasons:</div><div class="line">     39715  too few kmers found on same diagonal</div><div class="line">       255  potential tandem repeat</div><div class="line">        54  too many differences</div><div class="line">    183923  alignment score too low, or score drop to high</div><div class="line">       367  staggered read pairs</div><div class="line"></div><div class="line">Statistics of merged reads:</div><div class="line">    292.21  Mean fragment length</div><div class="line">      7.04  Standard deviation of fragment length</div><div class="line">      0.13  Mean expected error in forward sequences</div><div class="line">      0.26  Mean expected error in reverse sequences</div><div class="line">      0.33  Mean expected error in merged sequences</div><div class="line">      0.00  Mean observed errors in merged region of forward sequences</div><div class="line">      0.00  Mean observed errors in merged region of reverse sequences</div><div class="line">      0.00  Mean observed errors in merged region</div></pre></td></tr></table></figure>
+<h4 id="Merge-using-join-paired-ends-py-and-MSA"><a href="#Merge-using-join-paired-ends-py-and-MSA" class="headerlink" title="Merge using join_paired_ends.py and MSA"></a>Merge using join_paired_ends.py and MSA</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ join_paired_ends.py -f clean.R1.fq -r clean.R2.fq -m fastq-join -o fastq-join.fastq</div><div class="line"></div><div class="line">$ grep -c &apos;^@&apos; fastqjoin.join.fastq</div><div class="line">1025552</div><div class="line"></div><div class="line">$ grep -c &apos;^@&apos; fastqjoin.un1.fastq</div><div class="line">84936</div></pre></td></tr></table></figure>
+<p>merged ratio 92.4%<br>merged length: 290-293</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">JQ765577.1.1452 Bacteria;Firmicu      AACTACGTGCCAGCAGCCGCGGTAATACGTAGGTGGCAAGCGTTGTCCGGAATTATTGGG</div><div class="line">V4test1_2;barcodelabel=V4test1        -------TGCCAGCAGCCGCGGTAATACGTAGGGGGCGAGCGTTATCCGGATTTATTGGG</div><div class="line">V4test1_3;barcodelabel=V4test1        -------TGCCAGCAGCCGCGGTAATACGTAGGTGGCAAGCGTTGTCCGGAATTACTGGG</div><div class="line">V4test1_1;barcodelabel=V4test1        -------TGCCAGCAGCCGCGGTAATACGTATGGTGCAAGCGTTATCCGGATTTACTGGG</div><div class="line">                                             ************************ *  ** ****** ****** *** ****</div><div class="line"></div><div class="line">JQ765577.1.1452 Bacteria;Firmicu      CGTAAAGGGCTCGCAGGCGGTTTCTTAAGTCTGATGTGAAAGCCCCCGGCTCAACCGGGG</div><div class="line">V4test1_2;barcodelabel=V4test1        CGTAAAGCGTGTGTAGGCGATTTATTAAGTCTAAGATCAAAGCCCGAGGCTCTACCTCGG</div><div class="line">V4test1_3;barcodelabel=V4test1        TGTAAAGGGAGCGCAGGCGGGACTGCAAGTTGGATGTGAAATACCGCAGCTTAACTGCGG</div><div class="line">V4test1_1;barcodelabel=V4test1        TGTAAAGGGAGCGCAGGCGGTTTAGCAAGTCTGATGTGAAAGCCCGGGGCTCAACCCCGG</div><div class="line">                                       ****** *   * *****       ****   *  * ***  **   ***  **   **</div><div class="line"></div><div class="line">JQ765577.1.1452 Bacteria;Firmicu      AGGGTCATTGGAAACTGGGGAACTTGAGTGCAGAAGAGGAGAGTGGAATTCCACGTGTAG</div><div class="line">V4test1_2;barcodelabel=V4test1        TTCGTC-TTAGAAACTGGTATACTTGAGTGTGGTAGAGGCAAGTGGAATTTCTAGTGTAG</div><div class="line">V4test1_3;barcodelabel=V4test1        AGCTGCATCCAAAACTGTAGTTCTTGAGTGGAGTAGAGGTAGGCGGAATTCCGAGTGTAG</div><div class="line">V4test1_1;barcodelabel=V4test1        TACTGCATTGGAAACTGTTGGACTAGAGTGTCGGAGGGGTAAGTGGAATACCTAGTGTAG</div><div class="line">                                           * *   ******     ** *****  * ** **   * *****  *  ******</div><div class="line"></div><div class="line">JQ765577.1.1452 Bacteria;Firmicu      CGGTGAAATGCGTAGAGATGTGGAGGAACACCCAGTGGCGAAGGCGACTCTCTGGTCTGT</div><div class="line">V4test1_2;barcodelabel=V4test1        CGGTTAAATGCGTAGATATTAGAAGGAAAA-CCAGTGGCGAAGGCGGCTTGCTGGGCCAT</div><div class="line">V4test1_3;barcodelabel=V4test1        CGGTGAAATGCGTAGATATTCGGAGGAACA-CCAGTGGCGAAGGCGGCCTACTGGGCTCT</div><div class="line">V4test1_1;barcodelabel=V4test1        CGGTGAAATGCGTAGATATTAGGAGGAACA-CCAGTGGCGAAGGCGGCTTACTGGACGAT</div><div class="line">                                      **** *********** **  * ***** * *************** *   **** *  *</div><div class="line"></div><div class="line">JQ765577.1.1452 Bacteria;Firmicu      AACTGACGCTGAGGAGCGAAAGCGTGGGGAGCGAACAGGATTAGATACCCTGGTAGTCCA</div><div class="line">V4test1_2;barcodelabel=V4test1        TACTGACGCTGAGACACGAAAGCGTGGGGAGCAAATAGGATTAGATACCCTAGTAGTCC-</div><div class="line">V4test1_3;barcodelabel=V4test1        TACTGACGCTGAGGCTCGAAAGTGTGGGGAGCAAACAGGATTAGATACCCTAGTAGTCC-</div><div class="line">V4test1_1;barcodelabel=V4test1        TACTGACGCTGAGGCTCGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTAGTAGTCC-</div><div class="line">                                       ************   ****** ********* ** *************** *******</div></pre></td></tr></table></figure>
+<h3 id="Strip-primers-and-barcodes"><a href="#Strip-primers-and-barcodes" class="headerlink" title="Strip primers and barcodes"></a>Strip primers and barcodes</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">$ vsearch --fastx_filter   V4test1.merge.fq  \</div><div class="line">    --fastq_stripleft  15 \</div><div class="line">    --fastq_stripright 20 \</div><div class="line">    --fastqout V4test1.merge_strip.fq  \</div><div class="line">    --threads 20</div><div class="line"></div><div class="line">Reading input file 100%  </div><div class="line">886174 sequences kept (of which 886174 truncated), 0 sequences discarded.</div></pre></td></tr></table></figure>
+<h3 id="Dereplication-the-merged-sequence"><a href="#Dereplication-the-merged-sequence" class="headerlink" title="Dereplication the merged sequence"></a>Dereplication the merged sequence</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">$ vsearch --threads 20 \</div><div class="line">    --derep_fulllength fastqjoin.join.fasta \</div><div class="line">    --output fastqjoin.join_dereplication.fasta \</div><div class="line">    --minuniquesize 2 \</div><div class="line">    --threads 20  \</div><div class="line">    --sizeout</div><div class="line"></div><div class="line"></div><div class="line">vsearch v2.6.0_linux_x86_64, 251.7GB RAM, 40 cores</div><div class="line">https://github.com/torognes/vsearch</div><div class="line"></div><div class="line">Reading file fastqjoin.join.fasta 100%  </div><div class="line">299789462 nt in 1025552 seqs, min 36, max 296, avg 292</div><div class="line">Dereplicating 100%  </div><div class="line">Sorting 100%</div><div class="line">191515 unique sequences, avg cluster 5.4, median 1, max 26877</div><div class="line">Writing output file 100%  </div><div class="line">28864 uniques written, 162651 clusters discarded (84.9%)</div></pre></td></tr></table></figure>
+<p>output file:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">$ head fastqjoin.join_dereplication.fasta</div><div class="line">&gt;V4test1_31;barcodelabel=V4test1;size=26877;</div><div class="line">GTGCCAGCAGCCGCGGTAATACGGAGGATGCGAGCGTTATCCGGATTTATTGGGTTTAAAGGGTGCGCAGGCGGCACGTT</div><div class="line">AAGTCAGCGGTGAAATGTCGGGGCTCAACCCCGTCACTGCCGTTGAAACTGGCGAGCTCGAGTACGGATGAAGTGGGCGG</div><div class="line">AATGTGATGTGTAGCGGTGAAATGCTTAGATATGTCACAGAACACCGATTGCGAAGGCAGCTCACTAATCCGCAACTGAC</div><div class="line">GCTCATGCACGAAAGCGTGGGGATCGAACAGGATTAGATACCCTAGTAGTCCA</div><div class="line">&gt;V4test1_164;barcodelabel=V4test1;size=22065;</div><div class="line">GTGCCAGCAGCCGCGGTAATACGTAGGTTGCAAGCGTTGTCCGGATTTACTGGGTGTAAAGGGCGTGTAGGCGGAGATGC</div><div class="line">AAGTTGGGAGTGAAATCCCGGGGCTCAACCCCGGAACTGCTTTCAAAACTGCATCCCTTGAGTATCGGAGAGGCAAGCGG</div><div class="line">AATTCCTAGTGTAGCGGTGAAATGCGTAGATATTAGGAGGAACACCAGTGGCGAAGGCGGCTTGCTGGACGACAACTGAC</div><div class="line">GCTGAGGCGCGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTAGTAGTCCA</div></pre></td></tr></table></figure></p>
+<h3 id="Cluster-using-dereplicated-sequences"><a href="#Cluster-using-dereplicated-sequences" class="headerlink" title="Cluster using dereplicated sequences"></a>Cluster using dereplicated sequences</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">$ vsearch --cluster_fast fastqjoin.join_dereplication.fasta \</div><div class="line">    --id 0.97  \</div><div class="line">    --centroids fastqjoin.join_dereplication_out.txt  \</div><div class="line">    --relabel OTU_   \</div><div class="line">    --threads 20  \</div><div class="line">    --msaout fastqjoin.join_dereplication_msaout.txt</div><div class="line"></div><div class="line"></div><div class="line">vsearch v2.6.0_linux_x86_64, 251.7GB RAM, 40 cores</div><div class="line">https://github.com/torognes/vsearch</div><div class="line"></div><div class="line">Reading file fastqjoin.join_dereplication.fasta 100%  </div><div class="line">8429062 nt in 28864 seqs, min 81, max 295, avg 292</div><div class="line">Masking 100%  </div><div class="line">Sorting by length 100%</div><div class="line">Counting k-mers 100%  </div><div class="line">Clustering 100%  </div><div class="line">Sorting clusters 100%</div><div class="line">Writing clusters 100%  </div><div class="line">Clusters: 2141 Size min 1, max 1045, avg 13.5</div><div class="line">Singletons: 862, 3.0% of seqs, 40.3% of clusters</div><div class="line">Multiple alignments 100%</div></pre></td></tr></table></figure>
+<p>output files</p>
+<p>clusters<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">$ head fastqjoin.join_dereplication_out.txt</div><div class="line">&gt;OTU_1</div><div class="line">GTGCCAGCAGCCGCGGTCATACGTAGGATCCGAGCATTATCCGGAGTGACTGGGCGTAAAGAGTTGCGTAGGTGGATGTT</div><div class="line">TAAGTAGATGGTGAAATCTGGTGGCTCAACCATTCAGACTGTTATCTAAACTGGACATCTCGAGAGCGTCAGGGGTGACT</div><div class="line">GGAATTTCTAGTGTAGGAGTGAAATCCGTAGATATTAGAAGGAACACCGATAGCGTAGGCAGGTCACTAGGGCGTTTCTG</div><div class="line">ACACTAAGGCACGAAAGCGTAGGGAGCAAACGGGATTAGATACCCTAGTAGTCCA</div><div class="line">&gt;OTU_2</div><div class="line">GTGCCAGCAGCCGCGGTCATACGTAGGACCCAAGTGTTATCCGGAGTGACTGGGCGTAAAGAGTTGCGTAGGCGGTTATG</div><div class="line">CAAGTGAATAGTGAAACCTGGTGGCTCAACCACTCAGACTATTATTCAAACTGCATAACTCGAGAATAGTAGAGGTAACT</div><div class="line">GGAATTTCTTGTGTAGGAGTGAAATCCGTAGATATAAGAAGGAACACCAATGGCGTAGGCAGGTTACTGGGCTATTTCTG</div><div class="line">ACGCTAAGGCACGAAAGCGTGGGGAGCGAACCGGATTAGATACCCTAGTAGTCCA</div></pre></td></tr></table></figure></p>
+<p>consensus sequences and corresponding sequences<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">$ grep -c &apos;&gt;consensus&apos; fastqjoin.join_dereplication_msaout.txt</div><div class="line">2141</div><div class="line"></div><div class="line">$ head -n 11 fastqjoin.join_dereplication_msaout.txt</div><div class="line"></div><div class="line">&gt;*V4test1_137959;barcodelabel=V4test1;size=2;</div><div class="line">GTGCCAGCAGCCGCGGTCATACGTAGGATCCGAGCATTATCCGGAGTGACTGGGCGTAAAGAGTTGCGTAGGTGGATGTT</div><div class="line">TAAGTAGATGGTGAAATCTGGTGGCTCAACCATTCAGACTGTTATCTAAACTGGACATCTCGAGAGCGTCAGGGGTGACT</div><div class="line">GGAATTTCTAGTGTAGGAGTGAAATCCGTAGATATTAGAAGGAACACCGATAGCGTAGGCAGGTCACTAGGGCGTTTCTG</div><div class="line">ACACTAAGGCACGAAAGCGTAGGGAGCAAACGGGATTAGATACCCTAGTAGTCCA</div><div class="line">&gt;consensus</div><div class="line">GTGCCAGCAGCCGCGGTCATACGTAGGATCCGAGCATTATCCGGAGTGACTGGGCGTAAAGAGTTGCGTAGGTGGATGTT</div><div class="line">TAAGTAGATGGTGAAATCTGGTGGCTCAACCATTCAGACTGTTATCTAAACTGGACATCTCGAGAGCGTCAGGGGTGACT</div><div class="line">GGAATTTCTAGTGTAGGAGTGAAATCCGTAGATATTAGAAGGAACACCGATAGCGTAGGCAGGTCACTAGGGCGTTTCTG</div><div class="line">ACACTAAGGCACGAAAGCGTAGGGAGCAAACGGGATTAGATACCCTAGTAGTCCA</div></pre></td></tr></table></figure></p>
+<h3 id="Check-chimeras"><a href="#Check-chimeras" class="headerlink" title="Check chimeras"></a>Check chimeras</h3><h4 id="Detect-chimeras-based-on-reference"><a href="#Detect-chimeras-based-on-reference" class="headerlink" title="Detect chimeras based on reference"></a>Detect chimeras based on reference</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">$ vsearch --uchime_ref fastqjoin.join_dereplication_out.txt  \</div><div class="line">    -db /home/wzk/Project/KC2017-B123/rdp_gold.fa  \</div><div class="line">    --nonchimeras  fastqjoin.join_dereplication_nochimeras.txt \</div><div class="line">    --threads 20  </div><div class="line"></div><div class="line"></div><div class="line">vsearch v2.6.0_linux_x86_64, 251.7GB RAM, 40 cores</div><div class="line">https://github.com/torognes/vsearch</div><div class="line"></div><div class="line">Reading file /home/wzk/Project/KC2017-B123/rdp_gold.fa 100%  </div><div class="line">29007378 nt in 20098 seqs, min 320, max 2210, avg 1443</div><div class="line">Masking 100%  </div><div class="line">Counting k-mers 100%  </div><div class="line">Creating k-mer index 100%  </div><div class="line">Detecting chimeras 100%  </div><div class="line">Found 22 (1.0%) chimeras, 2118 (98.9%) non-chimeras,</div><div class="line">and 1 (0.0%) borderline sequences in 2141 unique sequences.</div><div class="line">Taking abundance information into account, this corresponds to</div><div class="line">22 (1.0%) chimeras, 2118 (98.9%) non-chimeras,</div><div class="line">and 1 (0.0%) borderline sequences in 2141 total sequences.</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">$ vsearch --uchime_ref fastqjoin.join_dereplication_out.txt \</div><div class="line">      -db /home/wzk/database/SILVA/SILVA_132_SSUParc_tax_silva_genus.fasta  \</div><div class="line">      --nonchimeras  fastqjoin.join_dereplication_nochimeras.txt \</div><div class="line">      --threads 20  </div><div class="line"></div><div class="line"></div><div class="line">vsearch v2.6.0_linux_x86_64, 251.7GB RAM, 40 cores</div><div class="line">https://github.com/torognes/vsearch</div><div class="line"></div><div class="line">Reading file /home/wzk/database/SILVA/SILVA_132_SSUParc_tax_silva_genus.fasta 100%  </div><div class="line">2296961572 nt in 1627728 seqs, min 1200, max 4000, avg 1411</div><div class="line">Masking 100%  </div><div class="line">Counting k-mers 100%  </div><div class="line">Creating k-mer index 100%  </div><div class="line">Detecting chimeras 100%  </div><div class="line">Found 182 (8.5%) chimeras, 1929 (90.1%) non-chimeras,</div><div class="line">and 30 (1.4%) borderline sequences in 2141 unique sequences.</div><div class="line">Taking abundance information into account, this corresponds to</div><div class="line">182 (8.5%) chimeras, 1929 (90.1%) non-chimeras,</div><div class="line">and 30 (1.4%) borderline sequences in 2141 total sequences.</div></pre></td></tr></table></figure>
+<p>the database records:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ grep -c &apos;^&gt;&apos; /home/wzk/Project/KC2017-B123/rdp_gold.fa</div><div class="line">20098</div><div class="line"></div><div class="line">$ grep -c &apos;^&gt;&apos; /home/wzk/database/SILVA/SILVA_132_SSUParc_tax_silva_genus.fasta</div><div class="line">1627728</div></pre></td></tr></table></figure></p>
+<p>These databases are enough, bacause the ratios of chemiras are similiar even the records of databased have great difference.</p>
+<h4 id="De-novo-detect-chimeras"><a href="#De-novo-detect-chimeras" class="headerlink" title="De novo detect chimeras"></a>De novo detect chimeras</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">$ vsearch --uchime_denovo B120.fa  \</div><div class="line">    --nonchimeras B120_nochimeras.fa  \</div><div class="line">    --threads 20</div><div class="line"></div><div class="line">vsearch v2.6.0_linux_x86_64, 251.7GB RAM, 40 cores</div><div class="line">https://github.com/torognes/vsearch</div><div class="line"></div><div class="line">Reading file B120.fa 100%  </div><div class="line">1422191 nt in 5723 seqs, min 37, max 296, avg 249</div><div class="line">Masking 100%  </div><div class="line">Sorting by abundance 100%</div><div class="line">Counting k-mers 100%  </div><div class="line">Detecting chimeras 100%  </div><div class="line">Found 0 (0.0%) chimeras, 5723 (100.0%) non-chimeras,</div><div class="line">and 0 (0.0%) borderline sequences in 5723 unique sequences.</div><div class="line">Taking abundance information into account, this corresponds to</div><div class="line">0 (0.0%) chimeras, 5723 (100.0%) non-chimeras,</div><div class="line">and 0 (0.0%) borderline sequences in 5723 total sequences.</div></pre></td></tr></table></figure>
+<h3 id="Construct-OTU-table"><a href="#Construct-OTU-table" class="headerlink" title="Construct OTU table"></a>Construct OTU table</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">$ vsearch --usearch_global fastqjoin.join.fasta    \</div><div class="line">    -db fastqjoin.join_dereplication_nochimeras.txt     \</div><div class="line">    --id 0.97 \</div><div class="line">    --otutabout otu_table.txt   \</div><div class="line">    --threads 20 </div><div class="line"></div><div class="line">vsearch v2.6.0_linux_x86_64, 251.7GB RAM, 40 cores</div><div class="line">https://github.com/torognes/vsearch</div><div class="line"></div><div class="line">Reading file fastqjoin.join_dereplication_nochimeras.txt 100%  </div><div class="line">546713 nt in 1929 seqs, min 81, max 295, avg 283</div><div class="line">Masking 100%  </div><div class="line">Counting k-mers 100%  </div><div class="line">Creating k-mer index 100%  </div><div class="line">Searching 100%  </div><div class="line">Matching query sequences: 934567 of 1025552 (91.13%)</div><div class="line">Writing OTU table (classic) 100%</div></pre></td></tr></table></figure>
+<p>output files:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">$ wc -l  out_table.txt</div><div class="line">1930 otu_table.txt</div><div class="line"></div><div class="line">$ head otu_table.txt </div><div class="line">#OTU ID V4test1</div><div class="line">OTU_1   2</div><div class="line">OTU_10  245</div><div class="line">OTU_100 37</div><div class="line">OTU_1000    25</div><div class="line">OTU_1001    12</div><div class="line">OTU_1002    11</div><div class="line">OTU_1003    13</div><div class="line">OTU_1004    12</div><div class="line">OTU_1005    24</div></pre></td></tr></table></figure></p>
+<h3 id="Assign-taxonomy-for-OTU"><a href="#Assign-taxonomy-for-OTU" class="headerlink" title="Assign taxonomy for OTU"></a>Assign taxonomy for OTU</h3><p>database:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">$ less rdp_16s_v16.fa</div><div class="line"></div><div class="line">&gt;AJ000684_S000004347;tax=d:Bacteria,p:&quot;Actinobacteria&quot;,c:Actinobacteria,o:Actinomycetales,f:Mycobacteriaceae,g:Mycobacterium;</div><div class="line">GAACGCTGGCGGCGTGCTTAACACATGCAAGTCGAACGGAAAGGTCTCTTCGGAGATACTCGAGTGGCGAACGGGTGAGT</div><div class="line">AACACGTGGGTAATCTGCCCTGCACATCGGGATAAGCCTGGGAAACTGGGTCTAATACCGAATAGGACCTCGAGGCGCAT</div><div class="line">GCCTTGTGGTGGAAAGCTTTTGCGGTGTGGGATGGGCCCGCGGCCTATCAGCTTGTTGGTGGGGTGACGGCCTACCAAGG</div><div class="line">CGACGACGGGTAGCCGGCCTGAGAGGGTGTCCGGCCACACTGGGACTGAGATACGGCCCAGACTCCTACGGGAGGCAGCA</div><div class="line">GTGGGGAATATTGCACAATGGGCGCAAGCCTGATGCAGCGACGCCGCGTGGGGGATGACGGNCTTCGGGTTGTAAACCTC</div><div class="line">TTTCAGCAGGGACGAAGCGCAAGTGACGGTACCTGCAGAAGAAGCACCGGCCAACTACGTGCCAGCAGCCGCGGTAATAC</div><div class="line">GTAGGGTGCGAGCGTTGTCCGGAATTACTGGGCGTAAAGAGCTCGTAGGTGGTTTGTCGCGTTGTTCGTGAAAACCGGGG</div><div class="line">GCTTAACCCTCGGCGTGCGGGCGATACGGGCAGACTGGAGTACTGCAGGGGAGACTGGAATTCCTGGTGTAGCGGTGGAA</div><div class="line">TGCGCAGATATCAGGAGGAACACCGGTGGCGAAGGCGGGTCTCTGGGCAGTAACTGACGCTGAGGAGCGAAAGCGTGGGG</div></pre></td></tr></table></figure>
+<h4 id="Alignment-format"><a href="#Alignment-format" class="headerlink" title="Alignment format"></a>Alignment format</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">$ vsearch --usearch_global  fastqjoin.join_dereplication_nochimeras.txt   \</div><div class="line">    -db /home/wzk/database/SILVA/rdp_16s_v16.fa \</div><div class="line">    --alnout otu_table_tax.aln \</div><div class="line">    --id 0.97 \</div><div class="line">    --threads 20</div><div class="line"></div><div class="line"></div><div class="line">vsearch v2.6.0_linux_x86_64, 251.7GB RAM, 40 cores</div><div class="line">https://github.com/torognes/vsearch</div><div class="line"></div><div class="line">Reading file /home/wzk/database/SILVA/rdp_16s_v16.fa 100%  </div><div class="line">19098167 nt in 13212 seqs, min 320, max 2210, avg 1446</div><div class="line">Masking 100%  </div><div class="line">Counting k-mers 100%  </div><div class="line">Creating k-mer index 100%  </div><div class="line">Searching 100%  </div><div class="line">Matching query sequences: 99 of 1929 (5.13%)</div></pre></td></tr></table></figure>
+<p>output file<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">$ less otu_table_tax.aln</div><div class="line"></div><div class="line"></div><div class="line">Query &gt;OTU_16</div><div class="line"> %Id   TLen  Target</div><div class="line"> 98%   1266  AY615201_S000548389;tax=d:Archaea,p:&quot;Euryarchaeota&quot;,c:Methanobacteria,o:Methanobacteriales,f:Methanobac</div><div class="line"></div><div class="line"> Query  294nt &gt;OTU_16</div><div class="line">Target 1266nt &gt;AY615201_S000548389;tax=d:Archaea,p:&quot;Euryarchaeota&quot;,c:Methanobacteria,o:Methanobacteriales,f:Methanob</div><div class="line"></div><div class="line">Qry    1 + GTGCCAGCAGCCGCGGTAACACCGGCAGCTCTAGTGGTAGCTGTTTTTATTGGGCCTAAAGCGT 64</div><div class="line">           |||||||| |||||||||||||||||||||||||||||||||||||||||||||||||||||||</div><div class="line">Tgt  373 + GTGCCAGCCGCCGCGGTAACACCGGCAGCTCTAGTGGTAGCTGTTTTTATTGGGCCTAAAGCGT 436</div><div class="line"></div><div class="line">Qry   65 + TCGTAGCCGGTTTGATAAGTCACTGGTGAAATCCTGTAGCTTAACTGTGGGAATTGCTGGTGAT 128</div><div class="line">           |||||||||||||| ||||||||||||||||||||||||||||||| |||||||||||||||||</div><div class="line">Tgt  437 + TCGTAGCCGGTTTGGTAAGTCACTGGTGAAATCCTGTAGCTTAACTATGGGAATTGCTGGTGAT 500</div><div class="line"></div><div class="line">Qry  129 + ACTGTTGAACTTGAGGTCGGGAGAGGTTAGCGGTACTCCCAGGGTAGAGGTGAAATTCTGTAAT 192</div><div class="line">           ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</div><div class="line">Tgt  501 + ACTGTTGAACTTGAGGTCGGGAGAGGTTAGCGGTACTCCCAGGGTAGAGGTGAAATTCTGTAAT 564</div><div class="line"></div><div class="line">Qry  193 + CCTGGGAGGACCACCTGTGGCGAAGGCGGCTAACTGGAACGAACCTGACGGTGAGGGACGAAAG 256</div><div class="line">           ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</div><div class="line">Tgt  565 + CCTGGGAGGACCACCTGTGGCGAAGGCGGCTAACTGGAACGAACCTGACGGTGAGGGACGAAAG 628</div><div class="line"></div><div class="line">Qry  257 + CTAGGGGCGCGAACCGGATTAGATACCCTAGTAGTCCA 294</div><div class="line">           ||||||||||||||||||||||||||||  ||||||| </div><div class="line">Tgt  629 + CTAGGGGCGCGAACCGGATTAGATACCCGGGTAGTCCT 666</div><div class="line"></div><div class="line">294 cols, 288 ids (98.0%), 0 gaps (0.0%)</div></pre></td></tr></table></figure></p>
+<h4 id="Alignment-using-SILVA-database"><a href="#Alignment-using-SILVA-database" class="headerlink" title="Alignment using SILVA database"></a>Alignment using SILVA database</h4><p>SILVA database</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt;GY193009.2153721.2155249   Bacteria;Firmicutes;Bacilli;Lactobacillales;Streptococcaceae;Streptococcus</div><div class="line">AGAGTTTGATCCTGGCTCAGGACGAACGCTGGCGGCGTGCCTAATACATGCAAGTAGAACGCTGAGGTTTGGTGTTTACACTAGACTGATGAGTTGCGAACGGGTGAGTAACGCGTAGGTAACCTGCCTCATAGCGGGGGATAACTATTGGAAACGATAGCTAATACCGCATAAGAGTAATTAACACATGTTAGTTATTTAAAAGGAGCAATTGCTTCACTGTGAGATGGACCTGCGTTGTATTAGCTAGTTGGTGAGGTAAAGGCTCACCAAGGCGACGATACATAGCCGACCTGAGAGGGTGATCGGCCACACTGGGACTGAGACACGGCCCAGACTCCTACGGGAGGCAGCAGTAGGGAATCTTCGGCAATGGACGGAAGTCTGACCGAGCAACGCCGCGTGAGTGAAGAAGGTTTTCGGATCGTAAAGCTCTGTTGTTAGAGAAGAACGTTGGTAGGAGTGGAAAATCTACCAAGTGACGGTAACTAACCAGAAAGGGACGGCTAACTACGTGCCAGCAGCCGCGGTAATACGTAGGTCCCGAGCGTTGTCCGGATTTATTGGGCGTAAAGCGAGCGCAGGCGGTTCTTTAAGTCTGAAGTTAAAGGCAGTGGCTTAACCATTGTACGCTTTGGAAACTGGAGGACTTGAGTGCAGAAGGGGAGAGTGGAATTCCATGTGTAGCGGTGAAATGCGTAGATATATGGAGGAACACCGGTGGCGAAAGCGGCTCTCTGGTCTGTAACTGACGCTGAGGCTCGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGCCGTAAACGATGAGTGCTAGGTGTTAGGCCCTTTCCGGGGCTTAGTGCCGCAGCTAACGCATTAAGCACTCCGCCTGGGGAGTACGACCGCAAGGTTGAAACTCAAAGGAATTGACGGGGGCCCGCACAAGCGGTGGAGCATGTGGTTTAATTCGAAGCAACGCGAAGAACCTTACCAGGTCTTGACATCCTTCTGACCGGCCTAGAGATAGGCTTTCTCTTCGGAGCAGAAGTGACAGGTGGTGCATGGTTGTCGTCAGCTCGTGTCGTGAGATGTTGGGTTAAGTCCCGCAACGAGCGCAACCCCTATTGTTAGTTGCCATCATTAAGTTGGGCACTCTAGCGAGACTGCCGGTAATAAACCGGAGGAAGGTGGGGATGACGTCAAATCATCATGCCCCTTATGACCTGGGCTACACACGTGCTACAATGGTTGGTACAACGAGTCGCAAGCCGGTGACGGCAAGCTAATCTCTTAAAGCCAATCTCAGTTCGGATTGTAGGCTGCAACTCGCCTACATGAAGTCGGAATCGCTAGTAATCGCGGATCAGCACGCCGCGGTGAATACGTTCCCGGGCCTTGTACACACCGCCCGTCACACCACGAGAGTTTGTAACACCCGAAGTCGGTGAGGTAACCTTTTAGGAGCCAGCCGCCTAAGGTGGGATAGATGATTGGGGTGAAGTCGTAACAAGGTAGCCGTATCGGAAGGTGCGGCTG</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">$ vsearch --usearch_global  fastqjoin.join_dereplication_nochimeras.txt    \</div><div class="line">       -db /home/wzk/database/SILVA/SILVA_132_SSUParc_tax_silva_genus.fasta  \</div><div class="line">       --alnout otu_table_tax.aln     \</div><div class="line">       --id 0.97     \</div><div class="line">       --threads 20</div><div class="line"></div><div class="line"></div><div class="line">vsearch v2.6.0_linux_x86_64, 251.7GB RAM, 40 cores</div><div class="line">https://github.com/torognes/vsearch</div><div class="line"></div><div class="line">Reading file /home/wzk/database/SILVA/SILVA_132_SSUParc_tax_silva_genus.fasta 100%  </div><div class="line">2296961572 nt in 1627728 seqs, min 1200, max 4000, avg 1411</div><div class="line">Masking 100%  </div><div class="line">Counting k-mers 100%  </div><div class="line">Creating k-mer index 100%  </div><div class="line">Searching 100%  </div><div class="line">Matching query sequences: 694 of 1929 (35.98%)</div></pre></td></tr></table></figure>
+<h4 id="Alignment-using-greengene-database"><a href="#Alignment-using-greengene-database" class="headerlink" title="Alignment using greengene database"></a>Alignment using greengene database</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt;Bacteria;Proteobacteria;Alphaproteobacteria;Sphingomonadales;Sphingomonadaceae;Kaistobacter</div><div class="line">AACGAACGCTGGCGGCATGCCTAACACATGCAAGTCGAACGAGACCTTCGGGTCTAGTGGCGCACGGGTGCGTAACGCGTGGGAATCTGCCCTTGGGTACGGAATAACAGTTAGAAATGACTGCTAATACCGTATAATGACTTCGGTCCAAAGATTTATCGCCCAGGGATGAGCCCGCGTAGGATTAGCTTGTTGGTGAGGTAAAGGCTCACCAAGGCGACGATCCTTAGCTGGTCTGAGAGGATGATCAGCCACACTGGGACTGAGACATGGCCCAGACTCCTACGGGAGGCAGCAGTGGGGAATATTGGACAATGGGCGAAAGCCTGATCCAGCAATGCCGCGTGAGTGATGAAGGCCTTAGGGTTGTAAAGCTCTTTTACCCGGGATGATAATGACAGTACCGGGAGAATAAGCCCCGGCTAACTCCGTGCCAGCAGCCGCGGTAATACGGAGGGGGCTAGCGTTGTTCGGAATTACTGGGCGTAAAGCGCACGTAGGCGGCTTTGTAAGTTAGAGGTGAAAGCCCGGGGCTCAACTCCGGAATTGCCTTTAAGACTGCATCGCTAGAATTGTGGAGAGGTGAGTGGAATTCCGAGTGTAGAGGTGAAATTCGTAGATATTCGGAAGAACACCAGTGGCGAAGGCGACTCACTGGACACATATTGACGCTGAGGTGCGAAAGCGTGGGGAGCAAACAGGATTAGATACCCTGGTAGTCCACGCCGTAAACGATGATGACTAGCTGTCGGGGCGCTTAGCGTTTCGGTGGCGCAGCTAACGCGTTAAGTCATCCGCCTGGGGAGTACGGCCGCAAGGTTAAAACTCAAAGAAATTGACGGGGGCCTGCACAAGCGGTGGAGCATGTGGTTTAATTCGAAGCAACGCGCAGAACCTTACCAGCGTTTGACATGGTAGGACGGTTTCCAGAGATGGATTCCTACCCTTACGGGACCTACACACAGGTGCTGCATGGCTGTCGTCAGCTCGTGTCGTGAGATGTTGGGTTAAGTCCCGCAACGAGCGCAACCCTCGTCTTTGGTTGCTACCATTTAGTTGAGCACTCTAAAAAAACTGCCGGTGATAAGCCGGAGGAAGGTGGGGATGACGTCAAGTCCTCATAGCCCTTACGCGCTGGGCTACACACGTGCTACAATGGCGGTGACAGAGGGCAGCAAACCCGCGAGGGTGAGCTAATCTCCAAAAGCCGTCTCAGTTCGGATTGTTCTCTGCAACTCGAGAGCATGAAGGCGGAATCGCTAGTAATCGCGGATCAGCACGCCGCGGTGAATACGTTCCCAGGCCTTGTACACACCGCCCGTCACATCACGAAAGTCGGTTGCACTAGAAGTCGGTGGGCTAACCCGCAAGGGAGGCAGCCGCCTAAAGTGTGATCGGTAATTGGGGTG</div></pre></td></tr></table></figure>
+<h4 id="Biom-format-for-taxonomy"><a href="#Biom-format-for-taxonomy" class="headerlink" title="Biom format for taxonomy"></a>Biom format for taxonomy</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">$ vsearch --usearch_global  fastqjoin.join_dereplication_nochimeras.txt   \</div><div class="line">    -db /home/wzk/database/SILVA/rdp_16s_v16.fa \</div><div class="line">    --biomout out_table_tax.biom  \</div><div class="line">    --id 0.97  \</div><div class="line">    --threads 20 </div><div class="line"></div><div class="line"></div><div class="line">vsearch v2.6.0_linux_x86_64, 251.7GB RAM, 40 cores</div><div class="line">https://github.com/torognes/vsearch</div><div class="line"></div><div class="line">Reading file /home/wzk/database/SILVA/rdp_16s_v16.fa 100%  </div><div class="line">19098167 nt in 13212 seqs, min 320, max 2210, avg 1446</div><div class="line">Masking 100%  </div><div class="line">Counting k-mers 100%  </div><div class="line">Creating k-mer index 100%  </div><div class="line">Searching 100%  </div><div class="line">Matching query sequences: 99 of 1929 (5.13%)</div><div class="line">Writing OTU table (biom 1.0) 100%</div></pre></td></tr></table></figure>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/07/16/Infernal_manual/" class="archive-article-date">
-  	<time datetime="2018-07-16T12:24:49.796Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-16</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.wuzhikun.cn/2018/07/16/vsearch_manual/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/07/16/vsearch_manual/" class="archive-article-date">
-  	<time datetime="2018-07-16T12:24:26.620Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-16</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/07/10/Mutiple_sequence_alignment/" class="archive-article-date">
-  	<time datetime="2018-07-10T12:33:56.664Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-10</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+<nav id="article-nav">
+  
+    <a href="/2018/07/16/Infernal_manual/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/07/10/Mutiple_sequence_alignment/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title"></div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/07/03/Fastq_and_sam_format/" class="archive-article-date">
-  	<time datetime="2018-07-03T15:03:11.911Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-03</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/06/28/Download_SRA_data_parallelly/" class="archive-article-date">
-  	<time datetime="2018-06-28T14:12:24.377Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-06-28</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+        
+        
+    </div>
+</aside>
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/01/08/hexo_markdown_math/" class="archive-article-date">
-  	<time datetime="2018-01-08T11:49:10.303Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-01-08</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/01/02/G_Statistics_for_BSA/" class="archive-article-date">
-  	<time datetime="2018-01-02T12:07:34.904Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-01-02</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
   
-    </div></section>
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -326,8 +365,8 @@
 	var yiliaConfig = {
 		mathjax: [object Object],
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
